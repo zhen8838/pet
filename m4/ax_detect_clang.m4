@@ -18,7 +18,7 @@ CLANG_CXXFLAGS=`$LLVM_CONFIG --cxxflags | \
 CLANG_LDFLAGS=`$LLVM_CONFIG --ldflags`
 # Construct a -R argument for libtool.
 # This is needed in case some of the clang libraries are shared libraries.
-CLANG_RFLAG=`echo "$CLANG_LDFLAGS" | $SED -e 's/-L/-R/g'`
+CLANG_RFLAG=`echo "$CLANG_LDFLAGS" | $SED -e 's/-L/-Wl,-rpath,/g'`
 
 CLANG_VERSION=`$LLVM_CONFIG --version`
 CLANG_LIB="LLVM-$CLANG_VERSION"

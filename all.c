@@ -1,1 +1,1 @@
-#include "../../git/pet/isl/all.h"
+#include "./isl/all.h"
