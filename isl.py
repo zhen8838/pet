@@ -1,7 +1,7 @@
 from ctypes import *
 
-isl = cdll.LoadLibrary("libpet.so")
-libc = cdll.LoadLibrary("libc.so.6")
+isl = cdll.LoadLibrary("libpet.dylib")
+libc = cdll.LoadLibrary("libc.dylib")
 
 class Error(Exception):
     pass
@@ -7681,6 +7681,157 @@ isl.isl_ast_node_free.argtypes = [c_void_p]
 isl.isl_ast_node_to_str.restype = POINTER(c_char)
 isl.isl_ast_node_to_str.argtypes = [c_void_p]
 
+class ast_print_options(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_ast_print_options_free(self.ptr)
+    def copy_callbacks(self, obj):
+        if hasattr(obj, 'print_user'):
+            self.print_user = obj.print_user
+        if hasattr(obj, 'print_for'):
+            self.print_for = obj.print_for
+    def set_print_user(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_print_options:
+                arg0 = ast_print_options(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_void_p, c_void_p, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2, cb_arg3):
+            cb_arg0 = printer(ctx=arg0.ctx, ptr=(cb_arg0))
+            cb_arg1 = ast_print_options(ctx=arg0.ctx, ptr=(cb_arg1))
+            cb_arg2 = ast_node(ctx=arg0.ctx, ptr=isl.isl_ast_node_copy(cb_arg2))
+            try:
+                res = arg1(cb_arg0, cb_arg1, cb_arg2)
+            except BaseException as e:
+                exc_info[0] = e
+                return None
+            return isl.isl_printer_copy(res.ptr)
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_print_options_set_print_user(isl.isl_ast_print_options_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if hasattr(arg0, 'print_user') and arg0.print_user['exc_info'] != None:
+            exc_info = arg0.print_user['exc_info'][0]
+            arg0.print_user['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'print_for') and arg0.print_for['exc_info'] != None:
+            exc_info = arg0.print_for['exc_info'][0]
+            arg0.print_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_print_options(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        obj.print_user = { 'func': cb1, 'exc_info': exc_info }
+        return obj
+    def set_print_for(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_print_options:
+                arg0 = ast_print_options(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_void_p, c_void_p, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2, cb_arg3):
+            cb_arg0 = printer(ctx=arg0.ctx, ptr=(cb_arg0))
+            cb_arg1 = ast_print_options(ctx=arg0.ctx, ptr=(cb_arg1))
+            cb_arg2 = ast_node(ctx=arg0.ctx, ptr=isl.isl_ast_node_copy(cb_arg2))
+            try:
+                res = arg1(cb_arg0, cb_arg1, cb_arg2)
+            except BaseException as e:
+                exc_info[0] = e
+                return None
+            return isl.isl_printer_copy(res.ptr)
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_print_options_set_print_for(isl.isl_ast_print_options_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if hasattr(arg0, 'print_user') and arg0.print_user['exc_info'] != None:
+            exc_info = arg0.print_user['exc_info'][0]
+            arg0.print_user['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'print_for') and arg0.print_for['exc_info'] != None:
+            exc_info = arg0.print_for['exc_info'][0]
+            arg0.print_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_print_options(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        obj.print_for = { 'func': cb1, 'exc_info': exc_info }
+        return obj
+    @staticmethod
+    def alloc():
+        ctx = Context.getDefaultInstance()
+        res = isl.isl_ast_print_options_alloc(ctx)
+        obj = ast_print_options(ctx=ctx, ptr=res)
+        return obj
+    def copy(arg0):
+        try:
+            if not arg0.__class__ is ast_print_options:
+                arg0 = ast_print_options(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_print_options_copy(arg0.ptr)
+        if hasattr(arg0, 'print_user') and arg0.print_user['exc_info'] != None:
+            exc_info = arg0.print_user['exc_info'][0]
+            arg0.print_user['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'print_for') and arg0.print_for['exc_info'] != None:
+            exc_info = arg0.print_for['exc_info'][0]
+            arg0.print_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_print_options(ctx=ctx, ptr=res)
+        return obj
+    def free(arg0):
+        try:
+            if not arg0.__class__ is ast_print_options:
+                arg0 = ast_print_options(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_print_options_free(isl.isl_ast_print_options_copy(arg0.ptr))
+        if hasattr(arg0, 'print_user') and arg0.print_user['exc_info'] != None:
+            exc_info = arg0.print_user['exc_info'][0]
+            arg0.print_user['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'print_for') and arg0.print_for['exc_info'] != None:
+            exc_info = arg0.print_for['exc_info'][0]
+            arg0.print_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_print_options(ctx=ctx, ptr=res)
+        return obj
+
+isl.isl_ast_print_options_set_print_user.restype = c_void_p
+isl.isl_ast_print_options_set_print_user.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_print_options_set_print_for.restype = c_void_p
+isl.isl_ast_print_options_set_print_for.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_print_options_alloc.restype = c_void_p
+isl.isl_ast_print_options_alloc.argtypes = [Context]
+isl.isl_ast_print_options_copy.restype = c_void_p
+isl.isl_ast_print_options_copy.argtypes = [c_void_p]
+isl.isl_ast_print_options_free.restype = c_void_p
+isl.isl_ast_print_options_free.argtypes = [c_void_p]
+isl.isl_ast_print_options_copy.restype = c_void_p
+isl.isl_ast_print_options_copy.argtypes = [c_void_p]
+isl.isl_ast_print_options_free.restype = c_void_p
+isl.isl_ast_print_options_free.argtypes = [c_void_p]
+
 class union_map(object):
     def __init__(self, *args, **keywords):
         if "ptr" in keywords:
@@ -9445,6 +9596,17 @@ class map(union_map):
         if res < 0:
             raise Error
         return bool(res)
+    @staticmethod
+    def identity(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_identity(isl.isl_space_copy(arg0.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def intersect(arg0, arg1):
         try:
             if not arg0.__class__ is map:
@@ -10323,6 +10485,8 @@ isl.isl_map_gist_params.restype = c_void_p
 isl.isl_map_gist_params.argtypes = [c_void_p, c_void_p]
 isl.isl_map_has_domain_tuple_id.argtypes = [c_void_p]
 isl.isl_map_has_range_tuple_id.argtypes = [c_void_p]
+isl.isl_map_identity.restype = c_void_p
+isl.isl_map_identity.argtypes = [c_void_p]
 isl.isl_map_intersect.restype = c_void_p
 isl.isl_map_intersect.argtypes = [c_void_p, c_void_p]
 isl.isl_map_intersect_domain.restype = c_void_p
@@ -14278,6 +14442,72 @@ isl.isl_point_free.restype = c_void_p
 isl.isl_point_free.argtypes = [c_void_p]
 isl.isl_point_to_str.restype = POINTER(c_char)
 isl.isl_point_to_str.argtypes = [c_void_p]
+
+class printer(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_printer_free(self.ptr)
+    def __str__(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ptr = isl.isl_printer_to_str(arg0.ptr)
+        res = cast(ptr, c_char_p).value.decode('ascii')
+        libc.free(ptr)
+        return res
+    def __repr__(self):
+        s = str(self)
+        if '"' in s:
+            return 'isl.printer("""%s""")' % s
+        else:
+            return 'isl.printer("%s")' % s
+    def copy(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_copy(arg0.ptr)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def free(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_free(isl.isl_printer_copy(arg0.ptr))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    @staticmethod
+    def to_file(arg0):
+        ctx = Context.getDefaultInstance()
+        res = isl.isl_printer_to_file(ctx, arg0.ptr)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+
+isl.isl_printer_copy.restype = c_void_p
+isl.isl_printer_copy.argtypes = [c_void_p]
+isl.isl_printer_free.restype = c_void_p
+isl.isl_printer_free.argtypes = [c_void_p]
+isl.isl_printer_to_file.restype = c_void_p
+isl.isl_printer_to_file.argtypes = [Context, c_int]
+isl.isl_printer_copy.restype = c_void_p
+isl.isl_printer_copy.argtypes = [c_void_p]
+isl.isl_printer_free.restype = c_void_p
+isl.isl_printer_free.argtypes = [c_void_p]
+isl.isl_printer_to_str.restype = c_void_p
+isl.isl_printer_to_str.argtypes = [Context]
 
 class pw_aff_list(object):
     def __init__(self, *args, **keywords):

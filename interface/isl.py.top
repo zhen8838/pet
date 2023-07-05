@@ -1,7 +1,7 @@
 from ctypes import *
 
-isl = cdll.LoadLibrary("libpet.so")
-libc = cdll.LoadLibrary("libc.so.6")
+isl = cdll.LoadLibrary("libpet.dylib")
+libc = cdll.LoadLibrary("libc.dylib")
 
 class Error(Exception):
     pass

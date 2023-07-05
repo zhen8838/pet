@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-struct isl_printer;
+struct __isl_export isl_printer;
 typedef struct isl_printer isl_printer;
 
 #if defined(__cplusplus)

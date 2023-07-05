@@ -11,9 +11,8 @@ export LDFLAGS=-L/Users/lisa/miniforge3/envs/ci/lib # gmp.dylib
 ./configure --prefix=`pwd`/build --with-clang-prefix=/Users/lisa/Documents/llvm-project/build/install # the custom llvm install path
 make 
 
-sed -i -e 's/libpet.so/libpet.dylib/g' **/*.py
-sed -i -e 's/libisl.so.23/libisl.dylib/g' **/*.py
-sed -i -e 's/cdll.LoadLibrary("libc.so.6")/cdll.LoadLibrary("libc.dylib")/g' **/*.py
+sed -i -e 's/libpet.so/libpet.dylib/g' **/*.py.top
+sed -i -e 's/cdll.LoadLibrary("libc.so.6")/cdll.LoadLibrary("libc.dylib")/g' **/*.py.top
 export PYTHONPATH="`pwd`/interface:`pwd`/isl/interface:$PYTHONPATH"
 export DYLD_LIBRARY_PATH="`pwd`/.libs:`pwd`/isl/.libs:/Users/lisa/Documents/llvm-project/build/install/lib:$DYLD_LIBRARY_PATH"
 ```

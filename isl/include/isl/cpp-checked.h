@@ -1983,6 +1983,7 @@ public:
   inline isl::checked::union_map gist_range(const isl::checked::union_set &uset) const;
   inline boolean has_domain_tuple_id() const;
   inline boolean has_range_tuple_id() const;
+  static inline isl::checked::map identity(isl::checked::space space);
   inline isl::checked::map intersect(isl::checked::map map2) const;
   inline isl::checked::union_map intersect(const isl::checked::union_map &umap2) const;
   inline isl::checked::map intersect(const isl::checked::basic_map &map2) const;
@@ -9981,6 +9982,12 @@ boolean map::has_domain_tuple_id() const
 boolean map::has_range_tuple_id() const
 {
   auto res = isl_map_has_range_tuple_id(get());
+  return manage(res);
+}
+
+isl::checked::map map::identity(isl::checked::space space)
+{
+  auto res = isl_map_identity(space.release());
   return manage(res);
 }
 

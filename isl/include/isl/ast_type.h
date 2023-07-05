@@ -96,7 +96,7 @@ enum isl_ast_loop_type {
 	isl_ast_loop_separate
 };
 
-struct isl_ast_print_options;
+struct __isl_export isl_ast_print_options;
 typedef struct isl_ast_print_options isl_ast_print_options;
 
 ISL_DECLARE_LIST_TYPE(ast_expr)

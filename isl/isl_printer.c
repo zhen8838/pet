@@ -282,6 +282,11 @@ __isl_null isl_printer *isl_printer_free(__isl_take isl_printer *p)
 	return NULL;
 }
 
+__isl_give isl_printer *isl_printer_copy(__isl_keep isl_printer *printer)
+{
+	return p;
+}
+
 isl_ctx *isl_printer_get_ctx(__isl_keep isl_printer *printer)
 {
 	return printer ? printer->ctx : NULL;

@@ -15,3 +15,7 @@ m4/lt~obsolete.m4
 interface/pet.pyc
 
 tags
+.deps
+.libs
+*.o
+*.lo

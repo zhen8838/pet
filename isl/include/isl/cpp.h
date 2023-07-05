@@ -2049,6 +2049,7 @@ public:
   inline isl::union_map gist_range(const isl::union_set &uset) const;
   inline bool has_domain_tuple_id() const;
   inline bool has_range_tuple_id() const;
+  static inline isl::map identity(isl::space space);
   inline isl::map intersect(isl::map map2) const;
   inline isl::union_map intersect(const isl::union_map &umap2) const;
   inline isl::map intersect(const isl::basic_map &map2) const;
@@ -12401,6 +12402,18 @@ bool map::has_range_tuple_id() const
   if (res < 0)
     exception::throw_last_error(saved_ctx);
   return res;
+}
+
+isl::map map::identity(isl::space space)
+{
+  if (space.is_null())
+    exception::throw_invalid("NULL input", __FILE__, __LINE__);
+  auto saved_ctx = space.ctx();
+  options_scoped_set_on_error saved_on_error(saved_ctx, exception::on_error);
+  auto res = isl_map_identity(space.release());
+  if (!res)
+    exception::throw_last_error(saved_ctx);
+  return manage(res);
 }
 
 isl::map map::intersect(isl::map map2) const
