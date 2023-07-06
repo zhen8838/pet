@@ -24,6 +24,7 @@ struct isl_printer_ops;
  * if there are no notes yet.
  */
 struct isl_printer {
+  int ref;
 	struct isl_ctx	*ctx;
 	struct isl_printer_ops *ops;
 	FILE        	*file;

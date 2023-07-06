@@ -221,6 +221,7 @@ __isl_give isl_printer *isl_printer_to_file(isl_ctx *ctx, FILE *file)
 		return NULL;
 	p->ctx = ctx;
 	isl_ctx_ref(p->ctx);
+  p->ref = 1;
 	p->ops = &file_ops;
 	p->file = file;
 	p->buf = NULL;
@@ -237,6 +238,17 @@ __isl_give isl_printer *isl_printer_to_file(isl_ctx *ctx, FILE *file)
 	return p;
 }
 
+__isl_give isl_printer *isl_printer_from_file(isl_ctx *ctx, char *file_path)
+{
+  FILE *file;
+  file = fopen(file_path, "w");
+	if (!file) {
+		fprintf(stderr, "Unable to open '%s' for writing\n", file_path);
+		return NULL;
+	}
+  return isl_printer_to_file(ctx, file);
+}
+
 __isl_give isl_printer *isl_printer_to_str(isl_ctx *ctx)
 {
 	struct isl_printer *p = isl_calloc_type(ctx, struct isl_printer);
@@ -244,6 +256,7 @@ __isl_give isl_printer *isl_printer_to_str(isl_ctx *ctx)
 		return NULL;
 	p->ctx = ctx;
 	isl_ctx_ref(p->ctx);
+  p->ref = 1;
 	p->ops = &str_ops;
 	p->file = NULL;
 	p->buf = isl_alloc_array(ctx, char, 256);
@@ -270,6 +283,11 @@ __isl_null isl_printer *isl_printer_free(__isl_take isl_printer *p)
 {
 	if (!p)
 		return NULL;
+  if (--p->ref > 0)
+    return NULL;
+
+  if (p->file)
+  	fclose(p->file);
 	free(p->buf);
 	free(p->indent_prefix);
 	free(p->prefix);
@@ -284,7 +302,11 @@ __isl_null isl_printer *isl_printer_free(__isl_take isl_printer *p)
 
 __isl_give isl_printer *isl_printer_copy(__isl_keep isl_printer *printer)
 {
-	return p;
+  if (!printer)
+    return NULL;
+
+  printer->ref++;
+	return printer;
 }
 
 isl_ctx *isl_printer_get_ctx(__isl_keep isl_printer *printer)

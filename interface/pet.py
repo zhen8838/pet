@@ -1,7 +1,7 @@
 from ctypes import *
 import isl
 
-pet = cdll.LoadLibrary("libpet.so")
+pet = cdll.LoadLibrary("libpet.dylib")
 
 class overflow:
     avoid = 0

@@ -116,6 +116,7 @@ enum isl_ast_node_type isl_ast_node_get_type(__isl_keep isl_ast_node *node);
 
 __isl_give isl_ast_node *isl_ast_node_set_annotation(
 	__isl_take isl_ast_node *node, __isl_take isl_id *annotation);
+__isl_export
 __isl_give isl_id *isl_ast_node_get_annotation(__isl_keep isl_ast_node *node);
 
 __isl_export
@@ -177,7 +178,7 @@ __isl_export
 __isl_give isl_ast_node *isl_ast_node_map_descendant_bottom_up(
 	__isl_take isl_ast_node *node, __isl_give isl_ast_node *(*fn)(
 		__isl_take isl_ast_node *node, void *user), void *user);
-
+__isl_export
 __isl_give isl_printer *isl_printer_print_ast_node(__isl_take isl_printer *p,
 	__isl_keep isl_ast_node *node);
 void isl_ast_node_dump(__isl_keep isl_ast_node *node);
@@ -232,6 +233,7 @@ __isl_give isl_printer *isl_ast_expr_print_macros(
 	__isl_keep isl_ast_expr *expr, __isl_take isl_printer *p);
 __isl_give isl_printer *isl_ast_node_print_macros(
 	__isl_keep isl_ast_node *node, __isl_take isl_printer *p);
+__isl_export
 __isl_give isl_printer *isl_ast_node_print(__isl_keep isl_ast_node *node,
 	__isl_take isl_printer *p,
 	__isl_take isl_ast_print_options *options);

@@ -25,6 +25,10 @@ class Context:
             Context.defaultInstance = Context()
         return Context.defaultInstance
 
+    @CFUNCTYPE(None, py_object)
+    def free_user(user):
+        pythonapi.Py_DecRef(py_object(user))
+
 isl.isl_ctx_alloc_with_pet_options.restype = c_void_p
 isl.isl_ctx_free.argtypes = [Context]
 
@@ -7012,6 +7016,18 @@ class ast_node(object):
             return 'isl.ast_node("""%s""")' % s
         else:
             return 'isl.ast_node("%s")' % s
+    def annotation(arg0):
+        try:
+            if not arg0.__class__ is ast_node:
+                arg0 = ast_node(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_node_get_annotation(arg0.ptr)
+        obj = id(ctx=ctx, ptr=res)
+        return obj
+    def get_annotation(arg0):
+        return arg0.annotation()
     def map_descendant_bottom_up(arg0, arg1):
         try:
             if not arg0.__class__ is ast_node:
@@ -7034,6 +7050,26 @@ class ast_node(object):
         if exc_info[0] is not None:
             raise exc_info[0]
         obj = ast_node(ctx=ctx, ptr=res)
+        return obj
+    def print(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is ast_node:
+                arg0 = ast_node(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is printer:
+                arg1 = printer(arg1)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is ast_print_options:
+                arg2 = ast_print_options(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_node_print(arg0.ptr, isl.isl_printer_copy(arg1.ptr), isl.isl_ast_print_options_copy(arg2.ptr))
+        obj = printer(ctx=ctx, ptr=res)
         return obj
     def to_C_str(arg0):
         try:
@@ -7059,8 +7095,12 @@ class ast_node(object):
         obj = ast_node_list(ctx=ctx, ptr=res)
         return obj
 
+isl.isl_ast_node_get_annotation.restype = c_void_p
+isl.isl_ast_node_get_annotation.argtypes = [c_void_p]
 isl.isl_ast_node_map_descendant_bottom_up.restype = c_void_p
 isl.isl_ast_node_map_descendant_bottom_up.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_node_print.restype = c_void_p
+isl.isl_ast_node_print.argtypes = [c_void_p, c_void_p, c_void_p]
 isl.isl_ast_node_to_C_str.restype = POINTER(c_char)
 isl.isl_ast_node_to_C_str.argtypes = [c_void_p]
 isl.isl_ast_node_to_list.restype = c_void_p
@@ -14479,6 +14519,26 @@ class printer(object):
         res = isl.isl_printer_copy(arg0.ptr)
         obj = printer(ctx=ctx, ptr=res)
         return obj
+    def end_line(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_end_line(isl.isl_printer_copy(arg0.ptr))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def flush(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_flush(isl.isl_printer_copy(arg0.ptr))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
     def free(arg0):
         try:
             if not arg0.__class__ is printer:
@@ -14490,18 +14550,99 @@ class printer(object):
         obj = printer(ctx=ctx, ptr=res)
         return obj
     @staticmethod
-    def to_file(arg0):
+    def from_file(arg0):
         ctx = Context.getDefaultInstance()
-        res = isl.isl_printer_to_file(ctx, arg0.ptr)
+        res = isl.isl_printer_from_file(ctx, arg0.encode('ascii'))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_ast_node(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_node:
+                arg1 = ast_node(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_ast_node(isl.isl_printer_copy(arg0.ptr), arg1.ptr)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_double(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_double(isl.isl_printer_copy(arg0.ptr), arg1)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_int(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_int(isl.isl_printer_copy(arg0.ptr), arg1)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_str(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_str(isl.isl_printer_copy(arg0.ptr), arg1.encode('ascii'))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def set_output_format(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_set_output_format(isl.isl_printer_copy(arg0.ptr), arg1)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def start_line(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_start_line(isl.isl_printer_copy(arg0.ptr))
         obj = printer(ctx=ctx, ptr=res)
         return obj
 
 isl.isl_printer_copy.restype = c_void_p
 isl.isl_printer_copy.argtypes = [c_void_p]
+isl.isl_printer_end_line.restype = c_void_p
+isl.isl_printer_end_line.argtypes = [c_void_p]
+isl.isl_printer_flush.restype = c_void_p
+isl.isl_printer_flush.argtypes = [c_void_p]
 isl.isl_printer_free.restype = c_void_p
 isl.isl_printer_free.argtypes = [c_void_p]
-isl.isl_printer_to_file.restype = c_void_p
-isl.isl_printer_to_file.argtypes = [Context, c_int]
+isl.isl_printer_from_file.restype = c_void_p
+isl.isl_printer_from_file.argtypes = [Context, c_char_p]
+isl.isl_printer_print_ast_node.restype = c_void_p
+isl.isl_printer_print_ast_node.argtypes = [c_void_p, c_void_p]
+isl.isl_printer_print_double.restype = c_void_p
+isl.isl_printer_print_double.argtypes = [c_void_p, c_int]
+isl.isl_printer_print_int.restype = c_void_p
+isl.isl_printer_print_int.argtypes = [c_void_p, c_int]
+isl.isl_printer_print_str.restype = c_void_p
+isl.isl_printer_print_str.argtypes = [c_void_p, c_char_p]
+isl.isl_printer_set_output_format.restype = c_void_p
+isl.isl_printer_set_output_format.argtypes = [c_void_p, c_int]
+isl.isl_printer_start_line.restype = c_void_p
+isl.isl_printer_start_line.argtypes = [c_void_p]
 isl.isl_printer_copy.restype = c_void_p
 isl.isl_printer_copy.argtypes = [c_void_p]
 isl.isl_printer_free.restype = c_void_p
