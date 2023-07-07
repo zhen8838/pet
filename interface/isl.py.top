@@ -1,7 +1,19 @@
 from ctypes import *
+import platform
 
-isl = cdll.LoadLibrary("libpet.dylib")
-libc = cdll.LoadLibrary("libc.dylib")
+def get_lib_ext():
+  if platform.system() == 'Windows':
+      lib_ext = '.dll' 
+  elif platform.system() == 'Linux':
+      lib_ext = '.so'
+  elif platform.system() == 'Darwin':
+      lib_ext = '.dylib'
+  else:
+      lib_ext = ''
+  return lib_ext
+
+isl = cdll.LoadLibrary("libpet" + get_lib_ext())
+libc = cdll.LoadLibrary("libc" + get_lib_ext())
 
 class Error(Exception):
     pass

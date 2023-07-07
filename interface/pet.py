@@ -1,7 +1,19 @@
 from ctypes import *
 import isl
+import platform
 
-pet = cdll.LoadLibrary("libpet.dylib")
+def get_lib_ext():
+  if platform.system() == 'Windows':
+      lib_ext = '.dll' 
+  elif platform.system() == 'Linux':
+      lib_ext = '.so'
+  elif platform.system() == 'Darwin':
+      lib_ext = '.dylib'
+  else:
+      lib_ext = ''
+  return lib_ext
+
+pet = cdll.LoadLibrary("libpet" + get_lib_ext())
 
 class overflow:
     avoid = 0
