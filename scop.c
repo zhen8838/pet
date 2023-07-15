@@ -178,6 +178,11 @@ __isl_give isl_space *pet_stmt_get_space(struct pet_stmt *stmt)
 	return space;
 }
 
+__isl_give isl_set *pet_stmt_get_domain(struct pet_stmt *stmt)
+{
+  return stmt->domain;
+}
+
 static void stmt_dump(struct pet_stmt *stmt, int indent)
 {
 	int i;
@@ -2784,6 +2789,16 @@ __isl_give isl_union_map *pet_scop_get_tagged_must_kills(
 	struct pet_scop *scop)
 {
 	return scop_collect_accesses(scop, pet_expr_access_killed, 1);
+}
+
+isl_size pet_scop_get_n_stmt(__isl_keep pet_scop *scop)
+{
+  return scop->n_stmt;
+}
+
+__isl_give struct pet_stmt* pet_scop_get_stmt(__isl_keep pet_scop *scop, int pos)
+{
+  return scop->stmts[pos];
 }
 
 /* Collect and return the set of all statement instances in "scop".

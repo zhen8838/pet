@@ -383,7 +383,10 @@ struct pet_stmt {
 };
 
 /* Return the iteration space of "stmt". */
-__isl_give isl_space *pet_stmt_get_space(struct pet_stmt *stmt);
+__isl_give isl_space *pet_stmt_get_space(__isl_keep struct pet_stmt *stmt);
+
+/* Return the domain of "stmt". */
+__isl_give isl_set *pet_stmt_get_domain(__isl_keep struct pet_stmt *stmt);
 
 /* Is "stmt" an assignment statement? */
 int pet_stmt_is_assign(struct pet_stmt *stmt);
@@ -603,6 +606,8 @@ __isl_give isl_union_map *pet_scop_get_must_kills(__isl_keep pet_scop *scop);
 /* Return the tagged definite kill access relation. */
 __isl_give isl_union_map *pet_scop_get_tagged_must_kills(
 	__isl_keep pet_scop *scop);
+isl_size pet_scop_get_n_stmt(__isl_keep pet_scop *scop);
+__isl_give struct pet_stmt* pet_scop_get_stmt(__isl_keep pet_scop *scop, int pos);
 
 /* Compute a mapping from all outermost arrays (of structs) in scop
  * to their innermost members.
