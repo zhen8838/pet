@@ -60,6 +60,50 @@ class stmt:
         ptr = pet.pet_stmt_print_body(self.ptr, p.ptr, ref2expr.ptr)
         return isl.printer(ptr=isl.isl.isl_printer_copy(ptr), ctx=p.ctx)
 
+    def can_build_ast_exprs(self) -> int:
+        return pet.pet_stmt_can_build_ast_exprs(self.ptr)
+
+    def pet_stmt_is_assign(self) -> int:
+        return pet.pet_stmt_is_assign(self.ptr)
+
+    def pet_stmt_is_kill(self) -> int:
+        return pet.pet_stmt_is_kill(self.ptr)
+
+    def build_ast_exprs(self, build: isl.ast_build, fn_index, fn_expr) -> isl.id_to_ast_expr:
+        exc_info0 = [None]
+        fn_0 = CFUNCTYPE(c_void_p, c_void_p, c_void_p)
+        
+        def cb_func0(cb_arg0, cb_arg1):
+            cb_arg0 = isl.multi_pw_aff(ctx=build.ctx, ptr=cb_arg0)
+            cb_arg1 = isl.id(ctx=build.ctx, ptr=isl.isl.isl_id_copy(cb_arg1))
+            try:
+                res = fn_index(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info0[0] = e
+                return None
+            return isl.isl.isl_multi_pw_aff_copy(res.ptr)
+        cb0 = fn_0(cb_func0) if fn_index is not None else None
+
+        exc_info1 = [None]
+        fn_1 = CFUNCTYPE(c_void_p, c_void_p, c_void_p)
+
+        def cb_func1(cb_arg0, cb_arg1):
+            cb_arg0 = isl.ast_expr(ctx=build.ctx, ptr=cb_arg0)
+            cb_arg1 = isl.id(ctx=build.ctx, ptr=isl.isl.isl_id_copy(cb_arg1))
+            try:
+                res = fn_expr(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info1[0] = e
+                return None
+            return isl.isl.isl_ast_expr_copy(res.ptr)
+        cb1 = fn_1(cb_func1) if fn_expr is not None else None
+
+        res = pet.pet_stmt_build_ast_exprs(self.ptr, build.ptr, cb0, None, cb1, None)
+        if exc_info0[0] is not None:
+            raise exc_info0[0]
+        if exc_info1[0] is not None:
+            raise exc_info1[0]
+        return isl.id_to_ast_expr(ctx=build.ctx, ptr=res)
 
 pet.pet_stmt_get_space.restype = c_void_p
 pet.pet_stmt_get_space.argtypes = [c_void_p]
@@ -67,6 +111,15 @@ pet.pet_stmt_print_body.restype = c_void_p
 pet.pet_stmt_print_body.argtypes = [c_void_p, c_void_p, c_void_p]
 pet.pet_stmt_get_domain.restype = c_void_p
 pet.pet_stmt_get_domain.argtypes = [c_void_p]
+pet.pet_stmt_can_build_ast_exprs.restype = c_int
+pet.pet_stmt_can_build_ast_exprs.argtypes = [c_void_p]
+pet.pet_stmt_is_assign.restype = c_int
+pet.pet_stmt_is_assign.argtypes = [c_void_p]
+pet.pet_stmt_is_kill.restype = c_int
+pet.pet_stmt_is_kill.argtypes = [c_void_p]
+pet.pet_stmt_build_ast_exprs.restype = c_void_p
+pet.pet_stmt_build_ast_exprs.argtypes = [
+    c_void_p, c_void_p, c_void_p, c_void_p, c_void_p, c_void_p]
 
 
 class scop:
