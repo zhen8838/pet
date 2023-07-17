@@ -1,20 +1,19 @@
 # Install Pet Python Interface On Mac M1
 
+⚠️ 由于我已经将对应m1需要的修改进行了push, linux系统下如果不使用clang可能需要回退关于rpath的改动.
 ```sh
 cd pet/
 # use brew install automake
-sed -i -e 's/^AM_INIT_AUTOMAKE.*/AM_INIT_AUTOMAKE/g' **/configure.ac
-sed -i -e 's/s\/-L\/-R\/g/s\/-L\/-Wl,-rpath,\/g/g' **/configure # setup rpath
-sed -i -e 's/s\/-L\/-R\/g/s\/-L\/-Wl,-rpath,\/g/g' **/ax_detect_clang.m4 # avoid override by reconfigure.
+# sed -i -e 's/^AM_INIT_AUTOMAKE.*/AM_INIT_AUTOMAKE/g' **/configure.ac
+# sed -i -e 's/s\/-L\/-R\/g/s\/-L\/-Wl,-rpath,\/g/g' **/configure # setup rpath
+# sed -i -e 's/s\/-L\/-R\/g/s\/-L\/-Wl,-rpath,\/g/g' **/ax_detect_clang.m4 # avoid override by reconfigure.
 export CFLAGS=-I/Users/lisa/miniforge3/envs/ci/include # please use conda install gmp NOTE need replace by your path
 export LDFLAGS=-L/Users/lisa/miniforge3/envs/ci/lib # gmp.dylib
 ./configure --prefix=`pwd`/build --with-clang-prefix=/Users/lisa/Documents/llvm-project/build/install # the custom llvm install path
-make 
+make
 
-sed -i -e 's/libpet.so/libpet.dylib/g' **/*.py.top
-sed -i -e 's/cdll.LoadLibrary("libc.so.6")/cdll.LoadLibrary("libc.dylib")/g' **/*.py.top
-export PYTHONPATH="`pwd`/interface:`pwd`/isl/interface:$PYTHONPATH"
-export DYLD_LIBRARY_PATH="`pwd`/.libs:`pwd`/isl/.libs:/Users/lisa/Documents/llvm-project/build/install/lib:$DYLD_LIBRARY_PATH"
+export DYLD_LIBRARY_PATH="`pwd`/.libs:`pwd`/isl/.libs:/Users/lisa/Documents/llvm-project/build/install/lib"
+export PYTHONPATH="`pwd`/interface:`pwd`:$PYTHONPATH"
 ```
 
 Requirements:
