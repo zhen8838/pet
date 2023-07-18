@@ -7877,26 +7877,6 @@ class ast_print_options(object):
         res = isl.isl_ast_print_options_alloc(ctx)
         obj = ast_print_options(ctx=ctx, ptr=res)
         return obj
-    def copy(arg0):
-        try:
-            if not arg0.__class__ is ast_print_options:
-                arg0 = ast_print_options(arg0)
-        except:
-            raise
-        ctx = arg0.ctx
-        res = isl.isl_ast_print_options_copy(arg0.ptr)
-        if hasattr(arg0, 'print_user') and arg0.print_user['exc_info'] != None:
-            exc_info = arg0.print_user['exc_info'][0]
-            arg0.print_user['exc_info'][0] = None
-            if exc_info is not None:
-                raise exc_info
-        if hasattr(arg0, 'print_for') and arg0.print_for['exc_info'] != None:
-            exc_info = arg0.print_for['exc_info'][0]
-            arg0.print_for['exc_info'][0] = None
-            if exc_info is not None:
-                raise exc_info
-        obj = ast_print_options(ctx=ctx, ptr=res)
-        return obj
     def free(arg0):
         try:
             if not arg0.__class__ is ast_print_options:
@@ -7924,8 +7904,6 @@ isl.isl_ast_print_options_set_print_for.restype = c_void_p
 isl.isl_ast_print_options_set_print_for.argtypes = [c_void_p, c_void_p, c_void_p]
 isl.isl_ast_print_options_alloc.restype = c_void_p
 isl.isl_ast_print_options_alloc.argtypes = [Context]
-isl.isl_ast_print_options_copy.restype = c_void_p
-isl.isl_ast_print_options_copy.argtypes = [c_void_p]
 isl.isl_ast_print_options_free.restype = c_void_p
 isl.isl_ast_print_options_free.argtypes = [c_void_p]
 isl.isl_ast_print_options_copy.restype = c_void_p
@@ -14584,16 +14562,6 @@ class printer(object):
             return 'isl.printer("""%s""")' % s
         else:
             return 'isl.printer("%s")' % s
-    def copy(arg0):
-        try:
-            if not arg0.__class__ is printer:
-                arg0 = printer(arg0)
-        except:
-            raise
-        ctx = arg0.ctx
-        res = isl.isl_printer_copy(arg0.ptr)
-        obj = printer(ctx=ctx, ptr=res)
-        return obj
     def end_line(arg0):
         try:
             if not arg0.__class__ is printer:
@@ -14711,8 +14679,6 @@ class printer(object):
         obj = printer(ctx=ctx, ptr=res)
         return obj
 
-isl.isl_printer_copy.restype = c_void_p
-isl.isl_printer_copy.argtypes = [c_void_p]
 isl.isl_printer_end_line.restype = c_void_p
 isl.isl_printer_end_line.argtypes = [c_void_p]
 isl.isl_printer_flush.restype = c_void_p

@@ -865,6 +865,9 @@ std::string cpp_type_printer::param(int arg, QualType type) const
 	if (type->isIntegerType())
 		return type.getAsString();
 
+	if (type->isFloatingType())
+		return type.getAsString();
+
 	if (cpp_generator::is_string(type))
 		return "std::string";
 

@@ -11,6 +11,9 @@ export CFLAGS=-I/Users/lisa/miniforge3/envs/ci/include # please use conda instal
 export LDFLAGS=-L/Users/lisa/miniforge3/envs/ci/lib # gmp.dylib
 ./configure --prefix=`pwd`/build --with-clang-prefix=/Users/lisa/Documents/llvm-project/build/install # the custom llvm install path
 make
+# note 编译会报错isl_printer_to_str函数有error, 这是因为原来isl printer接口名起的不合理, 接口导出工具会认为他是一个返回string的函数. 出错后我们编译python部分即可:
+make isl.py
+make pet
 
 export DYLD_LIBRARY_PATH="`pwd`/.libs:`pwd`/isl/.libs:/Users/lisa/Documents/llvm-project/build/install/lib"
 export PYTHONPATH="`pwd`/interface:`pwd`:$PYTHONPATH"

@@ -186,7 +186,6 @@ void isl_ast_node_dump(__isl_keep isl_ast_node *node);
 __isl_give char *isl_ast_node_to_str(__isl_keep isl_ast_node *node);
 __isl_export
 __isl_give isl_ast_print_options *isl_ast_print_options_alloc(isl_ctx *ctx);
-__isl_export
 __isl_give isl_ast_print_options *isl_ast_print_options_copy(
 	__isl_keep isl_ast_print_options *options);
 __isl_export
