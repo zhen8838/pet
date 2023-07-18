@@ -20,3 +20,5 @@ tags
 *.o
 *.lo
 *.pyc
+.vscode
+.env
