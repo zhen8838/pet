@@ -1,7 +1,7 @@
 # Makefile.in
 # aclocal.m4
 autom4te.cache/
-build-aux/
+# build-aux/
 config.h.in
 config.h.in~
 configure
