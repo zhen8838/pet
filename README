@@ -4,16 +4,15 @@
 ```sh
 cd pet/
 # use brew install automake
-# sed -i -e 's/^AM_INIT_AUTOMAKE.*/AM_INIT_AUTOMAKE/g' **/configure.ac
-# sed -i -e 's/s\/-L\/-R\/g/s\/-L\/-Wl,-rpath,\/g/g' **/configure # setup rpath
-# sed -i -e 's/s\/-L\/-R\/g/s\/-L\/-Wl,-rpath,\/g/g' **/ax_detect_clang.m4 # avoid override by reconfigure.
 export CFLAGS=-I/Users/lisa/miniforge3/envs/ci/include # please use conda install gmp NOTE need replace by your path
 export LDFLAGS=-L/Users/lisa/miniforge3/envs/ci/lib # gmp.dylib
 ./configure --prefix=`pwd`/build --with-clang-prefix=/Users/lisa/Documents/llvm-project/build/install # the custom llvm install path
 make
-# note 编译会报错isl_printer_to_str函数有error, 这是因为原来isl printer接口名起的不合理, 接口导出工具会认为他是一个返回string的函数. 出错后我们编译python部分即可:
+# note 编译会报错isl_printer_to_str函数有error, 这是因为原来isl printer接口名起的不合理, 接口导出工具会认为他是一个返回string的函数.
+# 因为修改起来太麻烦, 这里先忽略问题, 出错后我们编译python所依赖的部分也是没问题的:
 make isl.py
 make pet
+make libpet.la
 
 export DYLD_LIBRARY_PATH="`pwd`/.libs:`pwd`/isl/.libs:/Users/lisa/Documents/llvm-project/build/install/lib"
 export PYTHONPATH="`pwd`/interface:`pwd`:$PYTHONPATH"
