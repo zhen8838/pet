@@ -123,7 +123,7 @@ __isl_give isl_schedule_node *isl_schedule_node_sequence_splice_child(
 	__isl_take isl_schedule_node *node, int pos);
 __isl_give isl_schedule_node *isl_schedule_node_sequence_splice_children(
 	__isl_take isl_schedule_node *node);
-
+__isl_export
 __isl_give isl_space *isl_schedule_node_band_get_space(
 	__isl_keep isl_schedule_node *node);
 __isl_export
@@ -268,9 +268,10 @@ __isl_export
 __isl_give isl_schedule_node *isl_schedule_node_insert_set(
 	__isl_take isl_schedule_node *node,
 	__isl_take isl_union_set_list *filters);
-
+__isl_export
 __isl_give isl_schedule_node *isl_schedule_node_cut(
 	__isl_take isl_schedule_node *node);
+__isl_export
 __isl_give isl_schedule_node *isl_schedule_node_delete(
 	__isl_take isl_schedule_node *node);
 

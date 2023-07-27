@@ -41,6 +41,7 @@ int isl_printer_get_output_format(__isl_keep isl_printer *p);
 
 #define ISL_YAML_STYLE_BLOCK		0
 #define ISL_YAML_STYLE_FLOW		1
+__isl_export
 __isl_give isl_printer *isl_printer_set_yaml_style(__isl_take isl_printer *p,
 	int yaml_style);
 int isl_printer_get_yaml_style(__isl_keep isl_printer *p);

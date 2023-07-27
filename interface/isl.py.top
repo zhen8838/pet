@@ -11,6 +11,19 @@ class ISL_FORMAT(IntEnum):
   LATEX = 5
   EXT_POLYLIB = 6
 
+class ISL_YAML_STYLE(IntEnum):
+  BLOCK = 0
+  FLOW = 1
+
+class ISL_DIM_TYPE(IntEnum):
+	CST = 0
+	PARAM = 1
+	IN = 2
+	OUT = 3
+	SET = 3
+	DIV = 4
+	ALL = 5
+
 def get_lib_ext():
   if platform.system() == 'Windows':
       lib_ext = '.dll' 
