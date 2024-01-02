@@ -22,3 +22,4 @@ tags
 *.pyc
 .vscode
 .env
+out

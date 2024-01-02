@@ -22,43 +22,62 @@ int isl_options_get_ast_always_print_block(isl_ctx *ctx);
 isl_stat isl_options_set_ast_print_outermost_block(isl_ctx *ctx, int val);
 int isl_options_get_ast_print_outermost_block(isl_ctx *ctx);
 
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_from_val(__isl_take isl_val *v);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_from_id(__isl_take isl_id *id);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_neg(__isl_take isl_ast_expr *expr);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_add(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_sub(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_mul(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_div(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_pdiv_q(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_pdiv_r(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
 __isl_give isl_ast_expr *isl_ast_expr_and(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_and_then(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
 __isl_give isl_ast_expr *isl_ast_expr_or(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_or_else(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_le(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_lt(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_ge(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_gt(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_eq(__isl_take isl_ast_expr *expr1,
 	__isl_take isl_ast_expr *expr2);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_access(__isl_take isl_ast_expr *array,
 	__isl_take isl_ast_expr_list *indices);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_call(__isl_take isl_ast_expr *function,
 	__isl_take isl_ast_expr_list *arguments);
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_address_of(__isl_take isl_ast_expr *expr);
 
 __isl_give isl_ast_expr *isl_ast_expr_copy(__isl_keep isl_ast_expr *expr);
@@ -69,9 +88,11 @@ __isl_subclass(isl_ast_expr)
 enum isl_ast_expr_type isl_ast_expr_get_type(__isl_keep isl_ast_expr *expr);
 __isl_export
 __isl_give isl_val *isl_ast_expr_int_get_val(__isl_keep isl_ast_expr *expr);
+__isl_export
 __isl_give isl_val *isl_ast_expr_get_val(__isl_keep isl_ast_expr *expr);
 __isl_export
 __isl_give isl_id *isl_ast_expr_id_get_id(__isl_keep isl_ast_expr *expr);
+__isl_export
 __isl_give isl_id *isl_ast_expr_get_id(__isl_keep isl_ast_expr *expr);
 
 __isl_subclass(isl_ast_expr_op)
@@ -92,7 +113,7 @@ __isl_give isl_ast_expr *isl_ast_expr_set_op_arg(__isl_take isl_ast_expr *expr,
 
 isl_bool isl_ast_expr_is_equal(__isl_keep isl_ast_expr *expr1,
 	__isl_keep isl_ast_expr *expr2);
-
+__isl_export
 __isl_give isl_ast_expr *isl_ast_expr_substitute_ids(
 	__isl_take isl_ast_expr *expr, __isl_take isl_id_to_ast_expr *id2expr);
 __isl_export
@@ -248,7 +269,7 @@ __isl_give isl_printer *isl_ast_node_if_print(__isl_keep isl_ast_node *node,
 __isl_export
 __isl_give char *isl_ast_node_to_C_str(__isl_keep isl_ast_node *node);
 
-ISL_DECLARE_LIST_FN(ast_expr)
+ISL_DECLARE_EXPORTED_LIST_FN(ast_expr)
 ISL_DECLARE_EXPORTED_LIST_FN(ast_node)
 
 #if defined(__cplusplus)

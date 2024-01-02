@@ -328,13 +328,16 @@ __isl_give isl_union_map *isl_union_map_power(__isl_take isl_union_map *umap,
 	isl_bool *exact);
 __isl_give isl_union_map *isl_union_map_transitive_closure(
 	__isl_take isl_union_map *umap, isl_bool *exact);
-
+__isl_export
 __isl_give isl_union_map *isl_union_map_lex_lt_union_map(
 	__isl_take isl_union_map *umap1, __isl_take isl_union_map *umap2);
+__isl_export
 __isl_give isl_union_map *isl_union_map_lex_le_union_map(
 	__isl_take isl_union_map *umap1, __isl_take isl_union_map *umap2);
+__isl_export
 __isl_give isl_union_map *isl_union_map_lex_gt_union_map(
 	__isl_take isl_union_map *umap1, __isl_take isl_union_map *umap2);
+__isl_export
 __isl_give isl_union_map *isl_union_map_lex_ge_union_map(
 	__isl_take isl_union_map *umap1, __isl_take isl_union_map *umap2);
 

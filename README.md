@@ -4,7 +4,8 @@
 ```sh
 cd pet/
 # use brew install automake
-export CFLAGS=-I/Users/lisa/miniforge3/envs/ci/include # please use conda install gmp NOTE need replace by your path
+export CFLAGS="-I/Users/lisa/miniforge3/envs/ci/include -g" # please use conda install gmp NOTE need replace by your path
+export CXXFLAGS="-g"
 export LDFLAGS=-L/Users/lisa/miniforge3/envs/ci/lib # gmp.dylib
 ./configure --prefix=`pwd`/build --with-clang-prefix=/Users/lisa/Documents/llvm-project/build/install # the custom llvm install path
 make
