@@ -17,7 +17,7 @@ struct isl_morph;
  * During the construction of vertices and chambers, the activity domain
  * of every parametric vertex is full-dimensional.
  */
-struct isl_vertex {
+struct isl_internel_vertex {
 	isl_basic_set *dom;
 	isl_basic_set *vertex;
 };
@@ -38,7 +38,7 @@ struct isl_vertices {
 	isl_basic_set *bset;
 
 	int n_vertices;
-	struct isl_vertex *v;
+	struct isl_internel_vertex *v;
 
 	int n_chambers;
 	struct isl_chamber *c;
@@ -51,7 +51,7 @@ struct isl_cell {
 	isl_basic_set *dom;
 };
 
-struct isl_external_vertex {
+struct isl_vertex {
 	isl_vertices *vertices;
 	int id;
 };

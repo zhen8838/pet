@@ -21,6 +21,7 @@
 #include <isl_vec_private.h>
 #include <isl_space_private.h>
 #include <isl_val_private.h>
+#include <isl_printer_private.h>
 
 isl_ctx *isl_mat_get_ctx(__isl_keep isl_mat *mat)
 {
@@ -1467,6 +1468,61 @@ isl_stat isl_mat_sub_transform(isl_int **row, unsigned n_row,
 	isl_mat_free(t);
 	return isl_stat_ok;
 }
+
+__isl_give char *isl_mat_to_str(
+	__isl_keep isl_mat *mat)
+{
+	isl_printer *p;
+	char *s;
+  char tmp[256];
+  int indent = 0;
+
+	if (!mat)
+		return NULL;
+
+	p = isl_printer_to_str(isl_mat_get_ctx(mat));
+  int i, j;
+
+	if (!mat) {
+		return "null mat";
+	}
+
+	if (mat->n_row == 0) {
+    sprintf(tmp, "%*s[]\n", indent, "");
+    p = isl_printer_print_str(p, tmp);
+  }
+
+	for (i = 0; i < mat->n_row; ++i) {
+		if (!i) {
+      sprintf(tmp, "%*s[[", indent, "");
+      p = isl_printer_print_str(p, tmp);
+    }
+		else {
+      sprintf(tmp, "%*s[", indent+1, "");
+      p = isl_printer_print_str(p, tmp);
+    }
+		for (j = 0; j < mat->n_col; ++j) {
+			if (j) {
+        sprintf(tmp, ",");
+        p = isl_printer_print_str(p, tmp);
+      }
+      p = isl_printer_print_isl_int(p, mat->row[i][j]);
+		}
+		if (i == mat->n_row-1) {
+      sprintf(tmp, "]]");
+      p = isl_printer_print_str(p, tmp);
+    }
+		else {
+      sprintf(tmp, "]\n");
+      p = isl_printer_print_str(p, tmp);
+    }
+	}
+	s = isl_printer_get_str(p);
+	isl_printer_free(p);
+
+	return s;
+}
+
 
 void isl_mat_print_internal(__isl_keep isl_mat *mat, FILE *out, int indent)
 {
