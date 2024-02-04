@@ -755,13 +755,16 @@ __isl_give isl_map *isl_map_reaching_path_lengths(__isl_take isl_map *map,
 	isl_bool *exact);
 __isl_give isl_map *isl_map_transitive_closure(__isl_take isl_map *map,
 	isl_bool *exact);
-
+__isl_export
 __isl_give isl_map *isl_map_lex_le_map(__isl_take isl_map *map1,
 	__isl_take isl_map *map2);
+__isl_export
 __isl_give isl_map *isl_map_lex_lt_map(__isl_take isl_map *map1,
 	__isl_take isl_map *map2);
+__isl_export
 __isl_give isl_map *isl_map_lex_ge_map(__isl_take isl_map *map1,
 	__isl_take isl_map *map2);
+__isl_export
 __isl_give isl_map *isl_map_lex_gt_map(__isl_take isl_map *map1,
 	__isl_take isl_map *map2);
 
@@ -816,8 +819,9 @@ __isl_give isl_map *isl_map_from_aff(__isl_take isl_aff *aff);
 __isl_export
 __isl_give isl_map *isl_multi_aff_as_map(__isl_take isl_multi_aff *ma);
 __isl_give isl_map *isl_map_from_multi_aff(__isl_take isl_multi_aff *maff);
-
+__isl_export
 __isl_give isl_pw_aff *isl_map_dim_min(__isl_take isl_map *map, int pos);
+__isl_export
 __isl_give isl_pw_aff *isl_map_dim_max(__isl_take isl_map *map, int pos);
 
 ISL_DECLARE_EXPORTED_LIST_FN(basic_map)

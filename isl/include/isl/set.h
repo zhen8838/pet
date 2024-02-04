@@ -607,8 +607,9 @@ __isl_give isl_basic_set *isl_set_coefficients(__isl_take isl_set *set);
 __isl_give isl_basic_set *isl_basic_set_solutions(
 	__isl_take isl_basic_set *bset);
 __isl_give isl_basic_set *isl_set_solutions(__isl_take isl_set *set);
-
+__isl_export
 __isl_give isl_pw_aff *isl_set_dim_max(__isl_take isl_set *set, int pos);
+__isl_export
 __isl_give isl_pw_aff *isl_set_dim_min(__isl_take isl_set *set, int pos);
 
 __isl_give char *isl_basic_set_to_str(__isl_keep isl_basic_set *bset);

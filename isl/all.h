@@ -4,6 +4,7 @@
 #include <isl/val.h>
 #include <isl/aff.h>
 #include <isl/set.h>
+#include <isl/mat.h>
 #include <isl/map.h>
 #include <isl/ilp.h>
 #include <isl/union_set.h>
@@ -15,3 +16,4 @@
 #include <isl/fixed_box.h>
 #include <isl/constraint.h>
 #include <isl/local_space.h>
+#include <isl/vertices.h>
