@@ -29,6 +29,7 @@ extern "C" {
 isl_size isl_basic_set_n_dim(__isl_keep isl_basic_set *bset);
 isl_size isl_basic_set_n_param(__isl_keep isl_basic_set *bset);
 isl_size isl_basic_set_total_dim(__isl_keep const isl_basic_set *bset);
+__isl_export
 isl_size isl_basic_set_dim(__isl_keep isl_basic_set *bset,
 				enum isl_dim_type type);
 
@@ -59,6 +60,7 @@ __isl_give isl_basic_set *isl_basic_set_set_tuple_name(
 	__isl_take isl_basic_set *set, const char *s);
 __isl_give isl_set *isl_set_set_tuple_name(__isl_take isl_set *set,
 	const char *s);
+__isl_export
 const char *isl_basic_set_get_dim_name(__isl_keep isl_basic_set *bset,
 	enum isl_dim_type type, unsigned pos);
 __isl_give isl_basic_set *isl_basic_set_set_dim_name(
@@ -578,10 +580,11 @@ __isl_give isl_basic_set *isl_basic_set_drop_unused_params(
 	__isl_take isl_basic_set *bset);
 __isl_export
 __isl_give isl_set *isl_set_drop_unused_params(__isl_take isl_set *set);
-
+__isl_export
 __isl_give isl_mat *isl_basic_set_equalities_matrix(
 	__isl_keep isl_basic_set *bset, enum isl_dim_type c1,
 	enum isl_dim_type c2, enum isl_dim_type c3, enum isl_dim_type c4);
+__isl_export
 __isl_give isl_mat *isl_basic_set_inequalities_matrix(
 	__isl_keep isl_basic_set *bset, enum isl_dim_type c1,
 	enum isl_dim_type c2, enum isl_dim_type c3, enum isl_dim_type c4);
@@ -599,13 +602,18 @@ __isl_give isl_set *isl_set_from_multi_aff(__isl_take isl_multi_aff *ma);
 
 __isl_give isl_mat *isl_basic_set_reduced_basis(__isl_keep isl_basic_set *bset);
 
+__isl_export
 __isl_give isl_basic_set *isl_basic_set_coefficients(
 	__isl_take isl_basic_set *bset);
+__isl_export
 __isl_give isl_basic_set_list *isl_basic_set_list_coefficients(
 	__isl_take isl_basic_set_list *list);
+__isl_export
 __isl_give isl_basic_set *isl_set_coefficients(__isl_take isl_set *set);
+__isl_export
 __isl_give isl_basic_set *isl_basic_set_solutions(
 	__isl_take isl_basic_set *bset);
+__isl_export
 __isl_give isl_basic_set *isl_set_solutions(__isl_take isl_set *set);
 __isl_export
 __isl_give isl_pw_aff *isl_set_dim_max(__isl_take isl_set *set, int pos);

@@ -14001,6 +14001,16 @@ class set(union_set):
         res = isl.isl_set_coalesce(isl.isl_set_copy(arg0.ptr))
         obj = set(ctx=ctx, ptr=res)
         return obj
+    def coefficients(arg0):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_coefficients(isl.isl_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
     def complement(arg0):
         try:
             if not arg0.__class__ is set:
@@ -14757,6 +14767,16 @@ class set(union_set):
         return obj
     def get_simple_fixed_box_hull(arg0):
         return arg0.simple_fixed_box_hull()
+    def solutions(arg0):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_solutions(isl.isl_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
     def space(arg0):
         try:
             if not arg0.__class__ is set:
@@ -15003,6 +15023,8 @@ isl.isl_set_bind.restype = c_void_p
 isl.isl_set_bind.argtypes = [c_void_p, c_void_p]
 isl.isl_set_coalesce.restype = c_void_p
 isl.isl_set_coalesce.argtypes = [c_void_p]
+isl.isl_set_coefficients.restype = c_void_p
+isl.isl_set_coefficients.argtypes = [c_void_p]
 isl.isl_set_complement.restype = c_void_p
 isl.isl_set_complement.argtypes = [c_void_p]
 isl.isl_set_convex_hull.restype = c_void_p
@@ -15113,6 +15135,8 @@ isl.isl_set_sample_point.restype = c_void_p
 isl.isl_set_sample_point.argtypes = [c_void_p]
 isl.isl_set_get_simple_fixed_box_hull.restype = c_void_p
 isl.isl_set_get_simple_fixed_box_hull.argtypes = [c_void_p]
+isl.isl_set_solutions.restype = c_void_p
+isl.isl_set_solutions.argtypes = [c_void_p]
 isl.isl_set_get_space.restype = c_void_p
 isl.isl_set_get_space.argtypes = [c_void_p]
 isl.isl_set_get_stride.restype = c_void_p
@@ -15231,6 +15255,16 @@ class basic_set(set):
         res = isl.isl_basic_set_apply(isl.isl_basic_set_copy(arg0.ptr), isl.isl_basic_map_copy(arg1.ptr))
         obj = basic_set(ctx=ctx, ptr=res)
         return obj
+    def coefficients(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_coefficients(isl.isl_basic_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
     def compute_vertices(arg0):
         try:
             if not arg0.__class__ is basic_set:
@@ -15263,6 +15297,17 @@ class basic_set(set):
         res = isl.isl_basic_set_detect_equalities(isl.isl_basic_set_copy(arg0.ptr))
         obj = basic_set(ctx=ctx, ptr=res)
         return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
     def dim_max_val(arg0, arg1):
         try:
             if not arg0.__class__ is basic_set:
@@ -15272,6 +15317,30 @@ class basic_set(set):
         ctx = arg0.ctx
         res = isl.isl_basic_set_dim_max_val(isl.isl_basic_set_copy(arg0.ptr), arg1)
         obj = val(ctx=ctx, ptr=res)
+        return obj
+    def dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_get_dim_name(arg0.ptr, arg1, arg2)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_dim_name(arg0, arg1, arg2):
+        return arg0.dim_name(arg1, arg2)
+    def equalities_matrix(arg0, arg1, arg2, arg3, arg4):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_equalities_matrix(arg0.ptr, arg1, arg2, arg3, arg4)
+        obj = mat(ctx=ctx, ptr=res)
         return obj
     def flatten(arg0):
         try:
@@ -15331,6 +15400,16 @@ class basic_set(set):
         ctx = arg0.ctx
         res = isl.isl_basic_set_gist(isl.isl_basic_set_copy(arg0.ptr), isl.isl_basic_set_copy(arg1.ptr))
         obj = basic_set(ctx=ctx, ptr=res)
+        return obj
+    def inequalities_matrix(arg0, arg1, arg2, arg3, arg4):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_inequalities_matrix(arg0.ptr, arg1, arg2, arg3, arg4)
+        obj = mat(ctx=ctx, ptr=res)
         return obj
     def intersect(arg0, arg1):
         try:
@@ -15447,6 +15526,17 @@ class basic_set(set):
         res = isl.isl_basic_set_lexmin(isl.isl_basic_set_copy(arg0.ptr))
         obj = set(ctx=ctx, ptr=res)
         return obj
+    @staticmethod
+    def list_coefficients(arg0):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_coefficients(isl.isl_basic_set_list_copy(arg0.ptr))
+        obj = basic_set_list(ctx=ctx, ptr=res)
+        return obj
     def n_constraint(arg0):
         try:
             if not arg0.__class__ is basic_set:
@@ -15498,6 +15588,16 @@ class basic_set(set):
         res = isl.isl_basic_set_sample_point(isl.isl_basic_set_copy(arg0.ptr))
         obj = point(ctx=ctx, ptr=res)
         return obj
+    def solutions(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_solutions(isl.isl_basic_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
     def to_set(arg0):
         try:
             if not arg0.__class__ is basic_set:
@@ -15534,14 +15634,21 @@ isl.isl_basic_set_affine_hull.restype = c_void_p
 isl.isl_basic_set_affine_hull.argtypes = [c_void_p]
 isl.isl_basic_set_apply.restype = c_void_p
 isl.isl_basic_set_apply.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_set_coefficients.restype = c_void_p
+isl.isl_basic_set_coefficients.argtypes = [c_void_p]
 isl.isl_basic_set_compute_vertices.restype = c_void_p
 isl.isl_basic_set_compute_vertices.argtypes = [c_void_p]
 isl.isl_basic_set_get_constraint_list.restype = c_void_p
 isl.isl_basic_set_get_constraint_list.argtypes = [c_void_p]
 isl.isl_basic_set_detect_equalities.restype = c_void_p
 isl.isl_basic_set_detect_equalities.argtypes = [c_void_p]
+isl.isl_basic_set_dim.argtypes = [c_void_p, c_int]
 isl.isl_basic_set_dim_max_val.restype = c_void_p
 isl.isl_basic_set_dim_max_val.argtypes = [c_void_p, c_int]
+isl.isl_basic_set_get_dim_name.restype = POINTER(c_char)
+isl.isl_basic_set_get_dim_name.argtypes = [c_void_p, c_int, c_int]
+isl.isl_basic_set_equalities_matrix.restype = c_void_p
+isl.isl_basic_set_equalities_matrix.argtypes = [c_void_p, c_int, c_int, c_int, c_int]
 isl.isl_basic_set_flatten.restype = c_void_p
 isl.isl_basic_set_flatten.argtypes = [c_void_p]
 isl.isl_basic_set_foreach_constraint.argtypes = [c_void_p, c_void_p, c_void_p]
@@ -15549,6 +15656,8 @@ isl.isl_basic_set_from_constraint.restype = c_void_p
 isl.isl_basic_set_from_constraint.argtypes = [c_void_p]
 isl.isl_basic_set_gist.restype = c_void_p
 isl.isl_basic_set_gist.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_set_inequalities_matrix.restype = c_void_p
+isl.isl_basic_set_inequalities_matrix.argtypes = [c_void_p, c_int, c_int, c_int, c_int]
 isl.isl_basic_set_intersect.restype = c_void_p
 isl.isl_basic_set_intersect.argtypes = [c_void_p, c_void_p]
 isl.isl_basic_set_intersect_params.restype = c_void_p
@@ -15562,6 +15671,8 @@ isl.isl_basic_set_lexmax.restype = c_void_p
 isl.isl_basic_set_lexmax.argtypes = [c_void_p]
 isl.isl_basic_set_lexmin.restype = c_void_p
 isl.isl_basic_set_lexmin.argtypes = [c_void_p]
+isl.isl_basic_set_list_coefficients.restype = c_void_p
+isl.isl_basic_set_list_coefficients.argtypes = [c_void_p]
 isl.isl_basic_set_n_constraint.argtypes = [c_void_p]
 isl.isl_basic_set_params.restype = c_void_p
 isl.isl_basic_set_params.argtypes = [c_void_p]
@@ -15571,6 +15682,8 @@ isl.isl_basic_set_sample.restype = c_void_p
 isl.isl_basic_set_sample.argtypes = [c_void_p]
 isl.isl_basic_set_sample_point.restype = c_void_p
 isl.isl_basic_set_sample_point.argtypes = [c_void_p]
+isl.isl_basic_set_solutions.restype = c_void_p
+isl.isl_basic_set_solutions.argtypes = [c_void_p]
 isl.isl_basic_set_to_set.restype = c_void_p
 isl.isl_basic_set_to_set.argtypes = [c_void_p]
 isl.isl_basic_set_union.restype = c_void_p
