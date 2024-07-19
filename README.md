@@ -20,6 +20,14 @@ export DYLD_LIBRARY_PATH="`pwd`/.libs:`pwd`/isl/.libs:/Users/lisa/Documents/llvm
 export PYTHONPATH="`pwd`/interface:`pwd`:$PYTHONPATH"
 ```
 
+注意, 如果只需要使用isl部分(比如pet会与mlir产生冲突)时, 可以只编译并使用isl:
+```sh
+cd pet/isl
+make interface/isl.py
+export DYLD_LIBRARY_PATH="`pwd`/.libs:/Users/lisa/Documents/llvm-project-llvmorg-17.0.4/out/install/release/lib"
+export PYTHONPATH="`pwd`/interface:$PYTHONPATH"
+```
+
 Requirements:
 
 - pkg-config (http://www.freedesktop.org/wiki/Software/pkg-config)

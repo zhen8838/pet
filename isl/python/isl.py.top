@@ -1,6 +1,30 @@
 import os
 from ctypes import *
 from ctypes.util import find_library
+import platform
+from enum import IntEnum
+
+class ISL_FORMAT(IntEnum):
+  ISL = 0
+  POLYLIB = 1
+  POLYLIB_CONSTRAINTS = 2
+  OMEGA = 3
+  C = 4
+  LATEX = 5
+  EXT_POLYLIB = 6
+
+class ISL_YAML_STYLE(IntEnum):
+  BLOCK = 0
+  FLOW = 1
+
+class ISL_DIM_TYPE(IntEnum):
+	CST = 0
+	PARAM = 1
+	IN = 2
+	OUT = 3
+	SET = 3
+	DIV = 4
+	ALL = 5
 
 isl_dyld_library_path = os.environ.get('ISL_DYLD_LIBRARY_PATH')
 if isl_dyld_library_path != None:

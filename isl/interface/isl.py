@@ -1,7 +1,31 @@
-isl_dlname='libisl.so.23'
+isl_dlname='libisl.23.dylib'
 import os
 from ctypes import *
 from ctypes.util import find_library
+import platform
+from enum import IntEnum
+
+class ISL_FORMAT(IntEnum):
+  ISL = 0
+  POLYLIB = 1
+  POLYLIB_CONSTRAINTS = 2
+  OMEGA = 3
+  C = 4
+  LATEX = 5
+  EXT_POLYLIB = 6
+
+class ISL_YAML_STYLE(IntEnum):
+  BLOCK = 0
+  FLOW = 1
+
+class ISL_DIM_TYPE(IntEnum):
+	CST = 0
+	PARAM = 1
+	IN = 2
+	OUT = 3
+	SET = 3
+	DIV = 4
+	ALL = 5
 
 isl_dyld_library_path = os.environ.get('ISL_DYLD_LIBRARY_PATH')
 if isl_dyld_library_path != None:
@@ -159,6 +183,17 @@ class union_pw_multi_aff(object):
         res = isl.isl_union_pw_multi_aff_coalesce(isl.isl_union_pw_multi_aff_copy(arg0.ptr))
         obj = union_pw_multi_aff(ctx=ctx, ptr=res)
         return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is union_pw_multi_aff:
+                arg0 = union_pw_multi_aff(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_union_pw_multi_aff_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
     def domain(arg0):
         try:
             if not arg0.__class__ is union_pw_multi_aff:
@@ -510,6 +545,7 @@ isl.isl_union_pw_multi_aff_as_union_map.restype = c_void_p
 isl.isl_union_pw_multi_aff_as_union_map.argtypes = [c_void_p]
 isl.isl_union_pw_multi_aff_coalesce.restype = c_void_p
 isl.isl_union_pw_multi_aff_coalesce.argtypes = [c_void_p]
+isl.isl_union_pw_multi_aff_dim.argtypes = [c_void_p, c_int]
 isl.isl_union_pw_multi_aff_domain.restype = c_void_p
 isl.isl_union_pw_multi_aff_domain.argtypes = [c_void_p]
 isl.isl_union_pw_multi_aff_drop_unused_params.restype = c_void_p
@@ -1162,6 +1198,17 @@ class union_pw_aff(union_pw_multi_aff, multi_union_pw_aff):
         res = isl.isl_union_pw_aff_coalesce(isl.isl_union_pw_aff_copy(arg0.ptr))
         obj = union_pw_aff(ctx=ctx, ptr=res)
         return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is union_pw_aff:
+                arg0 = union_pw_aff(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_union_pw_aff_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
     def domain(arg0):
         try:
             if not arg0.__class__ is union_pw_aff:
@@ -1384,6 +1431,7 @@ isl.isl_union_pw_aff_bind_id.restype = c_void_p
 isl.isl_union_pw_aff_bind_id.argtypes = [c_void_p, c_void_p]
 isl.isl_union_pw_aff_coalesce.restype = c_void_p
 isl.isl_union_pw_aff_coalesce.argtypes = [c_void_p]
+isl.isl_union_pw_aff_dim.argtypes = [c_void_p, c_int]
 isl.isl_union_pw_aff_domain.restype = c_void_p
 isl.isl_union_pw_aff_domain.argtypes = [c_void_p]
 isl.isl_union_pw_aff_drop_unused_params.restype = c_void_p
@@ -2434,6 +2482,17 @@ class pw_multi_aff(union_pw_multi_aff, multi_pw_aff):
         res = isl.isl_pw_multi_aff_coalesce(isl.isl_pw_multi_aff_copy(arg0.ptr))
         obj = pw_multi_aff(ctx=ctx, ptr=res)
         return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is pw_multi_aff:
+                arg0 = pw_multi_aff(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_pw_multi_aff_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
     def domain(arg0):
         try:
             if not arg0.__class__ is pw_multi_aff:
@@ -3004,6 +3063,7 @@ isl.isl_pw_multi_aff_bind_domain_wrapped_domain.restype = c_void_p
 isl.isl_pw_multi_aff_bind_domain_wrapped_domain.argtypes = [c_void_p, c_void_p]
 isl.isl_pw_multi_aff_coalesce.restype = c_void_p
 isl.isl_pw_multi_aff_coalesce.argtypes = [c_void_p]
+isl.isl_pw_multi_aff_dim.argtypes = [c_void_p, c_int]
 isl.isl_pw_multi_aff_domain.restype = c_void_p
 isl.isl_pw_multi_aff_domain.argtypes = [c_void_p]
 isl.isl_pw_multi_aff_domain_map.restype = c_void_p
@@ -3264,6 +3324,17 @@ class pw_aff(union_pw_aff, pw_multi_aff, multi_pw_aff):
         res = isl.isl_pw_aff_cond(isl.isl_pw_aff_copy(arg0.ptr), isl.isl_pw_aff_copy(arg1.ptr), isl.isl_pw_aff_copy(arg2.ptr))
         obj = pw_aff(ctx=ctx, ptr=res)
         return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is pw_aff:
+                arg0 = pw_aff(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_pw_aff_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
     def div(arg0, arg1):
         try:
             if not arg0.__class__ is pw_aff:
@@ -3846,6 +3917,7 @@ isl.isl_pw_aff_coalesce.restype = c_void_p
 isl.isl_pw_aff_coalesce.argtypes = [c_void_p]
 isl.isl_pw_aff_cond.restype = c_void_p
 isl.isl_pw_aff_cond.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_pw_aff_dim.argtypes = [c_void_p, c_int]
 isl.isl_pw_aff_div.restype = c_void_p
 isl.isl_pw_aff_div.argtypes = [c_void_p, c_void_p]
 isl.isl_pw_aff_domain.restype = c_void_p
@@ -4760,6 +4832,17 @@ class aff(pw_aff, multi_aff):
         return obj
     def get_constant_val(arg0):
         return arg0.constant_val()
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is aff:
+                arg0 = aff(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_aff_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
     def div(arg0, arg1):
         try:
             if not arg0.__class__ is aff:
@@ -5049,6 +5132,31 @@ class aff(pw_aff, multi_aff):
             obj = aff(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def set_coefficient_si(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is aff:
+                arg0 = aff(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_aff_set_coefficient_si(isl.isl_aff_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = aff(ctx=ctx, ptr=res)
+        return obj
+    def set_coefficient_val(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is aff:
+                arg0 = aff(arg0)
+        except:
+            raise
+        try:
+            if not arg3.__class__ is val:
+                arg3 = val(arg3)
+        except:
+            return pw_aff(arg0).set_coefficient_val(arg1, arg2, arg3)
+        ctx = arg0.ctx
+        res = isl.isl_aff_set_coefficient_val(isl.isl_aff_copy(arg0.ptr), arg1, arg2, isl.isl_val_copy(arg3.ptr))
+        obj = aff(ctx=ctx, ptr=res)
+        return obj
     def sub(arg0, arg1):
         try:
             if not arg0.__class__ is aff:
@@ -5091,6 +5199,11 @@ class aff(pw_aff, multi_aff):
         return obj
     @staticmethod
     def zero_on_domain(*args):
+        if len(args) == 1 and args[0].__class__ is local_space:
+            ctx = args[0].ctx
+            res = isl.isl_aff_zero_on_domain(isl.isl_local_space_copy(args[0].ptr))
+            obj = aff(ctx=ctx, ptr=res)
+            return obj
         if len(args) == 1 and args[0].__class__ is space:
             ctx = args[0].ctx
             res = isl.isl_aff_zero_on_domain_space(isl.isl_space_copy(args[0].ptr))
@@ -5110,6 +5223,7 @@ isl.isl_aff_ceil.restype = c_void_p
 isl.isl_aff_ceil.argtypes = [c_void_p]
 isl.isl_aff_get_constant_val.restype = c_void_p
 isl.isl_aff_get_constant_val.argtypes = [c_void_p]
+isl.isl_aff_dim.argtypes = [c_void_p, c_int]
 isl.isl_aff_div.restype = c_void_p
 isl.isl_aff_div.argtypes = [c_void_p, c_void_p]
 isl.isl_aff_domain_reverse.restype = c_void_p
@@ -5148,12 +5262,18 @@ isl.isl_aff_scale_val.restype = c_void_p
 isl.isl_aff_scale_val.argtypes = [c_void_p, c_void_p]
 isl.isl_aff_scale_down_val.restype = c_void_p
 isl.isl_aff_scale_down_val.argtypes = [c_void_p, c_void_p]
+isl.isl_aff_set_coefficient_si.restype = c_void_p
+isl.isl_aff_set_coefficient_si.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_aff_set_coefficient_val.restype = c_void_p
+isl.isl_aff_set_coefficient_val.argtypes = [c_void_p, c_int, c_int, c_void_p]
 isl.isl_aff_sub.restype = c_void_p
 isl.isl_aff_sub.argtypes = [c_void_p, c_void_p]
 isl.isl_aff_to_list.restype = c_void_p
 isl.isl_aff_to_list.argtypes = [c_void_p]
 isl.isl_aff_unbind_params_insert_domain.restype = c_void_p
 isl.isl_aff_unbind_params_insert_domain.argtypes = [c_void_p, c_void_p]
+isl.isl_aff_zero_on_domain.restype = c_void_p
+isl.isl_aff_zero_on_domain.argtypes = [c_void_p]
 isl.isl_aff_zero_on_domain_space.restype = c_void_p
 isl.isl_aff_zero_on_domain_space.argtypes = [c_void_p]
 isl.isl_aff_copy.restype = c_void_p
@@ -5408,8 +5528,241 @@ class ast_build(object):
         if hasattr(self, 'ptr'):
             isl.isl_ast_build_free(self.ptr)
     def copy_callbacks(self, obj):
+        if hasattr(obj, 'after_each_for'):
+            self.after_each_for = obj.after_each_for
+        if hasattr(obj, 'before_each_mark'):
+            self.before_each_mark = obj.before_each_mark
+        if hasattr(obj, 'after_each_mark'):
+            self.after_each_mark = obj.after_each_mark
+        if hasattr(obj, 'create_leaf'):
+            self.create_leaf = obj.create_leaf
         if hasattr(obj, 'at_each_domain'):
             self.at_each_domain = obj.at_each_domain
+        if hasattr(obj, 'before_each_for'):
+            self.before_each_for = obj.before_each_for
+    def set_after_each_for(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_build:
+                arg0 = ast_build(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_void_p, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = ast_node(ctx=arg0.ctx, ptr=(cb_arg0))
+            cb_arg1 = ast_build(ctx=arg0.ctx, ptr=isl.isl_ast_build_copy(cb_arg1))
+            try:
+                res = arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return None
+            return isl.isl_ast_node_copy(res.ptr)
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_build_set_after_each_for(isl.isl_ast_build_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
+            exc_info = arg0.at_each_domain['exc_info'][0]
+            arg0.at_each_domain['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_build(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        obj.after_each_for = { 'func': cb1, 'exc_info': exc_info }
+        return obj
+    def set_before_each_mark(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_build:
+                arg0 = ast_build(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = id(ctx=arg0.ctx, ptr=isl.isl_id_copy(cb_arg0))
+            cb_arg1 = ast_build(ctx=arg0.ctx, ptr=isl.isl_ast_build_copy(cb_arg1))
+            try:
+                arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_build_set_before_each_mark(isl.isl_ast_build_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
+            exc_info = arg0.at_each_domain['exc_info'][0]
+            arg0.at_each_domain['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_build(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        obj.before_each_mark = { 'func': cb1, 'exc_info': exc_info }
+        return obj
+    def set_after_each_mark(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_build:
+                arg0 = ast_build(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_void_p, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = ast_node(ctx=arg0.ctx, ptr=(cb_arg0))
+            cb_arg1 = ast_build(ctx=arg0.ctx, ptr=isl.isl_ast_build_copy(cb_arg1))
+            try:
+                res = arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return None
+            return isl.isl_ast_node_copy(res.ptr)
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_build_set_after_each_mark(isl.isl_ast_build_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
+            exc_info = arg0.at_each_domain['exc_info'][0]
+            arg0.at_each_domain['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_build(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        obj.after_each_mark = { 'func': cb1, 'exc_info': exc_info }
+        return obj
+    def set_create_leaf(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_build:
+                arg0 = ast_build(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = ast_build(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                res = arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return None
+            return isl.isl_ast_node_copy(res.ptr)
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_build_set_create_leaf(isl.isl_ast_build_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
+            exc_info = arg0.at_each_domain['exc_info'][0]
+            arg0.at_each_domain['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_build(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        obj.create_leaf = { 'func': cb1, 'exc_info': exc_info }
+        return obj
     def set_at_each_domain(arg0, arg1):
         try:
             if not arg0.__class__ is ast_build:
@@ -5432,14 +5785,94 @@ class ast_build(object):
         res = isl.isl_ast_build_set_at_each_domain(isl.isl_ast_build_copy(arg0.ptr), cb1, None)
         if exc_info[0] is not None:
             raise exc_info[0]
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
         if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
             exc_info = arg0.at_each_domain['exc_info'][0]
             arg0.at_each_domain['exc_info'][0] = None
             if exc_info is not None:
                 raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
         obj = ast_build(ctx=ctx, ptr=res)
         obj.copy_callbacks(arg0)
         obj.at_each_domain = { 'func': cb1, 'exc_info': exc_info }
+        return obj
+    def set_before_each_for(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_build:
+                arg0 = ast_build(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = ast_build(ctx=arg0.ctx, ptr=isl.isl_ast_build_copy(cb_arg0))
+            try:
+                res = arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return None
+            return isl.isl_id_copy(res.ptr)
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_build_set_before_each_for(isl.isl_ast_build_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
+            exc_info = arg0.at_each_domain['exc_info'][0]
+            arg0.at_each_domain['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_build(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        obj.before_each_for = { 'func': cb1, 'exc_info': exc_info }
         return obj
     def access_from(*args):
         if len(args) == 2 and args[1].__class__ is multi_pw_aff:
@@ -5451,9 +5884,34 @@ class ast_build(object):
                 raise
             ctx = args[0].ctx
             res = isl.isl_ast_build_access_from_multi_pw_aff(args[0].ptr, isl.isl_multi_pw_aff_copy(args[1].ptr))
+            if hasattr(args[0], 'after_each_for') and args[0].after_each_for['exc_info'] != None:
+                exc_info = args[0].after_each_for['exc_info'][0]
+                args[0].after_each_for['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_mark') and args[0].before_each_mark['exc_info'] != None:
+                exc_info = args[0].before_each_mark['exc_info'][0]
+                args[0].before_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'after_each_mark') and args[0].after_each_mark['exc_info'] != None:
+                exc_info = args[0].after_each_mark['exc_info'][0]
+                args[0].after_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'create_leaf') and args[0].create_leaf['exc_info'] != None:
+                exc_info = args[0].create_leaf['exc_info'][0]
+                args[0].create_leaf['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
             if hasattr(args[0], 'at_each_domain') and args[0].at_each_domain['exc_info'] != None:
                 exc_info = args[0].at_each_domain['exc_info'][0]
                 args[0].at_each_domain['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_for') and args[0].before_each_for['exc_info'] != None:
+                exc_info = args[0].before_each_for['exc_info'][0]
+                args[0].before_each_for['exc_info'][0] = None
                 if exc_info is not None:
                     raise exc_info
             obj = ast_expr(ctx=ctx, ptr=res)
@@ -5467,9 +5925,34 @@ class ast_build(object):
                 raise
             ctx = args[0].ctx
             res = isl.isl_ast_build_access_from_pw_multi_aff(args[0].ptr, isl.isl_pw_multi_aff_copy(args[1].ptr))
+            if hasattr(args[0], 'after_each_for') and args[0].after_each_for['exc_info'] != None:
+                exc_info = args[0].after_each_for['exc_info'][0]
+                args[0].after_each_for['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_mark') and args[0].before_each_mark['exc_info'] != None:
+                exc_info = args[0].before_each_mark['exc_info'][0]
+                args[0].before_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'after_each_mark') and args[0].after_each_mark['exc_info'] != None:
+                exc_info = args[0].after_each_mark['exc_info'][0]
+                args[0].after_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'create_leaf') and args[0].create_leaf['exc_info'] != None:
+                exc_info = args[0].create_leaf['exc_info'][0]
+                args[0].create_leaf['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
             if hasattr(args[0], 'at_each_domain') and args[0].at_each_domain['exc_info'] != None:
                 exc_info = args[0].at_each_domain['exc_info'][0]
                 args[0].at_each_domain['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_for') and args[0].before_each_for['exc_info'] != None:
+                exc_info = args[0].before_each_for['exc_info'][0]
+                args[0].before_each_for['exc_info'][0] = None
                 if exc_info is not None:
                     raise exc_info
             obj = ast_expr(ctx=ctx, ptr=res)
@@ -5485,9 +5968,34 @@ class ast_build(object):
                 raise
             ctx = args[0].ctx
             res = isl.isl_ast_build_call_from_multi_pw_aff(args[0].ptr, isl.isl_multi_pw_aff_copy(args[1].ptr))
+            if hasattr(args[0], 'after_each_for') and args[0].after_each_for['exc_info'] != None:
+                exc_info = args[0].after_each_for['exc_info'][0]
+                args[0].after_each_for['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_mark') and args[0].before_each_mark['exc_info'] != None:
+                exc_info = args[0].before_each_mark['exc_info'][0]
+                args[0].before_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'after_each_mark') and args[0].after_each_mark['exc_info'] != None:
+                exc_info = args[0].after_each_mark['exc_info'][0]
+                args[0].after_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'create_leaf') and args[0].create_leaf['exc_info'] != None:
+                exc_info = args[0].create_leaf['exc_info'][0]
+                args[0].create_leaf['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
             if hasattr(args[0], 'at_each_domain') and args[0].at_each_domain['exc_info'] != None:
                 exc_info = args[0].at_each_domain['exc_info'][0]
                 args[0].at_each_domain['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_for') and args[0].before_each_for['exc_info'] != None:
+                exc_info = args[0].before_each_for['exc_info'][0]
+                args[0].before_each_for['exc_info'][0] = None
                 if exc_info is not None:
                     raise exc_info
             obj = ast_expr(ctx=ctx, ptr=res)
@@ -5501,9 +6009,34 @@ class ast_build(object):
                 raise
             ctx = args[0].ctx
             res = isl.isl_ast_build_call_from_pw_multi_aff(args[0].ptr, isl.isl_pw_multi_aff_copy(args[1].ptr))
+            if hasattr(args[0], 'after_each_for') and args[0].after_each_for['exc_info'] != None:
+                exc_info = args[0].after_each_for['exc_info'][0]
+                args[0].after_each_for['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_mark') and args[0].before_each_mark['exc_info'] != None:
+                exc_info = args[0].before_each_mark['exc_info'][0]
+                args[0].before_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'after_each_mark') and args[0].after_each_mark['exc_info'] != None:
+                exc_info = args[0].after_each_mark['exc_info'][0]
+                args[0].after_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'create_leaf') and args[0].create_leaf['exc_info'] != None:
+                exc_info = args[0].create_leaf['exc_info'][0]
+                args[0].create_leaf['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
             if hasattr(args[0], 'at_each_domain') and args[0].at_each_domain['exc_info'] != None:
                 exc_info = args[0].at_each_domain['exc_info'][0]
                 args[0].at_each_domain['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_for') and args[0].before_each_for['exc_info'] != None:
+                exc_info = args[0].before_each_for['exc_info'][0]
+                args[0].before_each_for['exc_info'][0] = None
                 if exc_info is not None:
                     raise exc_info
             obj = ast_expr(ctx=ctx, ptr=res)
@@ -5519,9 +6052,34 @@ class ast_build(object):
                 raise
             ctx = args[0].ctx
             res = isl.isl_ast_build_expr_from_pw_aff(args[0].ptr, isl.isl_pw_aff_copy(args[1].ptr))
+            if hasattr(args[0], 'after_each_for') and args[0].after_each_for['exc_info'] != None:
+                exc_info = args[0].after_each_for['exc_info'][0]
+                args[0].after_each_for['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_mark') and args[0].before_each_mark['exc_info'] != None:
+                exc_info = args[0].before_each_mark['exc_info'][0]
+                args[0].before_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'after_each_mark') and args[0].after_each_mark['exc_info'] != None:
+                exc_info = args[0].after_each_mark['exc_info'][0]
+                args[0].after_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'create_leaf') and args[0].create_leaf['exc_info'] != None:
+                exc_info = args[0].create_leaf['exc_info'][0]
+                args[0].create_leaf['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
             if hasattr(args[0], 'at_each_domain') and args[0].at_each_domain['exc_info'] != None:
                 exc_info = args[0].at_each_domain['exc_info'][0]
                 args[0].at_each_domain['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_for') and args[0].before_each_for['exc_info'] != None:
+                exc_info = args[0].before_each_for['exc_info'][0]
+                args[0].before_each_for['exc_info'][0] = None
                 if exc_info is not None:
                     raise exc_info
             obj = ast_expr(ctx=ctx, ptr=res)
@@ -5535,9 +6093,34 @@ class ast_build(object):
                 raise
             ctx = args[0].ctx
             res = isl.isl_ast_build_expr_from_set(args[0].ptr, isl.isl_set_copy(args[1].ptr))
+            if hasattr(args[0], 'after_each_for') and args[0].after_each_for['exc_info'] != None:
+                exc_info = args[0].after_each_for['exc_info'][0]
+                args[0].after_each_for['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_mark') and args[0].before_each_mark['exc_info'] != None:
+                exc_info = args[0].before_each_mark['exc_info'][0]
+                args[0].before_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'after_each_mark') and args[0].after_each_mark['exc_info'] != None:
+                exc_info = args[0].after_each_mark['exc_info'][0]
+                args[0].after_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'create_leaf') and args[0].create_leaf['exc_info'] != None:
+                exc_info = args[0].create_leaf['exc_info'][0]
+                args[0].create_leaf['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
             if hasattr(args[0], 'at_each_domain') and args[0].at_each_domain['exc_info'] != None:
                 exc_info = args[0].at_each_domain['exc_info'][0]
                 args[0].at_each_domain['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_for') and args[0].before_each_for['exc_info'] != None:
+                exc_info = args[0].before_each_for['exc_info'][0]
+                args[0].before_each_for['exc_info'][0] = None
                 if exc_info is not None:
                     raise exc_info
             obj = ast_expr(ctx=ctx, ptr=res)
@@ -5564,9 +6147,34 @@ class ast_build(object):
                 raise
             ctx = args[0].ctx
             res = isl.isl_ast_build_node_from_schedule(args[0].ptr, isl.isl_schedule_copy(args[1].ptr))
+            if hasattr(args[0], 'after_each_for') and args[0].after_each_for['exc_info'] != None:
+                exc_info = args[0].after_each_for['exc_info'][0]
+                args[0].after_each_for['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_mark') and args[0].before_each_mark['exc_info'] != None:
+                exc_info = args[0].before_each_mark['exc_info'][0]
+                args[0].before_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'after_each_mark') and args[0].after_each_mark['exc_info'] != None:
+                exc_info = args[0].after_each_mark['exc_info'][0]
+                args[0].after_each_mark['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'create_leaf') and args[0].create_leaf['exc_info'] != None:
+                exc_info = args[0].create_leaf['exc_info'][0]
+                args[0].create_leaf['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
             if hasattr(args[0], 'at_each_domain') and args[0].at_each_domain['exc_info'] != None:
                 exc_info = args[0].at_each_domain['exc_info'][0]
                 args[0].at_each_domain['exc_info'][0] = None
+                if exc_info is not None:
+                    raise exc_info
+            if hasattr(args[0], 'before_each_for') and args[0].before_each_for['exc_info'] != None:
+                exc_info = args[0].before_each_for['exc_info'][0]
+                args[0].before_each_for['exc_info'][0] = None
                 if exc_info is not None:
                     raise exc_info
             obj = ast_node(ctx=ctx, ptr=res)
@@ -5585,9 +6193,34 @@ class ast_build(object):
             raise
         ctx = arg0.ctx
         res = isl.isl_ast_build_node_from_schedule_map(arg0.ptr, isl.isl_union_map_copy(arg1.ptr))
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
         if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
             exc_info = arg0.at_each_domain['exc_info'][0]
             arg0.at_each_domain['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
             if exc_info is not None:
                 raise exc_info
         obj = ast_node(ctx=ctx, ptr=res)
@@ -5600,20 +6233,147 @@ class ast_build(object):
             raise
         ctx = arg0.ctx
         res = isl.isl_ast_build_get_schedule(arg0.ptr)
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
         if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
             exc_info = arg0.at_each_domain['exc_info'][0]
             arg0.at_each_domain['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
             if exc_info is not None:
                 raise exc_info
         obj = union_map(ctx=ctx, ptr=res)
         return obj
     def get_schedule(arg0):
         return arg0.schedule()
+    def set_iterators(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_build:
+                arg0 = ast_build(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id_list:
+                arg1 = id_list(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_build_set_iterators(isl.isl_ast_build_copy(arg0.ptr), isl.isl_id_list_copy(arg1.ptr))
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
+            exc_info = arg0.at_each_domain['exc_info'][0]
+            arg0.at_each_domain['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_build(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        return obj
+    def set_options(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_build:
+                arg0 = ast_build(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is union_map:
+                arg1 = union_map(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_build_set_options(isl.isl_ast_build_copy(arg0.ptr), isl.isl_union_map_copy(arg1.ptr))
+        if hasattr(arg0, 'after_each_for') and arg0.after_each_for['exc_info'] != None:
+            exc_info = arg0.after_each_for['exc_info'][0]
+            arg0.after_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_mark') and arg0.before_each_mark['exc_info'] != None:
+            exc_info = arg0.before_each_mark['exc_info'][0]
+            arg0.before_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'after_each_mark') and arg0.after_each_mark['exc_info'] != None:
+            exc_info = arg0.after_each_mark['exc_info'][0]
+            arg0.after_each_mark['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'create_leaf') and arg0.create_leaf['exc_info'] != None:
+            exc_info = arg0.create_leaf['exc_info'][0]
+            arg0.create_leaf['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'at_each_domain') and arg0.at_each_domain['exc_info'] != None:
+            exc_info = arg0.at_each_domain['exc_info'][0]
+            arg0.at_each_domain['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'before_each_for') and arg0.before_each_for['exc_info'] != None:
+            exc_info = arg0.before_each_for['exc_info'][0]
+            arg0.before_each_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_build(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        return obj
 
 isl.isl_ast_build_alloc.restype = c_void_p
 isl.isl_ast_build_alloc.argtypes = [Context]
+isl.isl_ast_build_set_after_each_for.restype = c_void_p
+isl.isl_ast_build_set_after_each_for.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_build_set_before_each_mark.restype = c_void_p
+isl.isl_ast_build_set_before_each_mark.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_build_set_after_each_mark.restype = c_void_p
+isl.isl_ast_build_set_after_each_mark.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_build_set_create_leaf.restype = c_void_p
+isl.isl_ast_build_set_create_leaf.argtypes = [c_void_p, c_void_p, c_void_p]
 isl.isl_ast_build_set_at_each_domain.restype = c_void_p
 isl.isl_ast_build_set_at_each_domain.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_build_set_before_each_for.restype = c_void_p
+isl.isl_ast_build_set_before_each_for.argtypes = [c_void_p, c_void_p, c_void_p]
 isl.isl_ast_build_access_from_multi_pw_aff.restype = c_void_p
 isl.isl_ast_build_access_from_multi_pw_aff.argtypes = [c_void_p, c_void_p]
 isl.isl_ast_build_access_from_pw_multi_aff.restype = c_void_p
@@ -5634,6 +6394,10 @@ isl.isl_ast_build_node_from_schedule_map.restype = c_void_p
 isl.isl_ast_build_node_from_schedule_map.argtypes = [c_void_p, c_void_p]
 isl.isl_ast_build_get_schedule.restype = c_void_p
 isl.isl_ast_build_get_schedule.argtypes = [c_void_p]
+isl.isl_ast_build_set_iterators.restype = c_void_p
+isl.isl_ast_build_set_iterators.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_build_set_options.restype = c_void_p
+isl.isl_ast_build_set_options.argtypes = [c_void_p, c_void_p]
 isl.isl_ast_build_copy.restype = c_void_p
 isl.isl_ast_build_copy.argtypes = [c_void_p]
 isl.isl_ast_build_free.restype = c_void_p
@@ -5688,6 +6452,300 @@ class ast_expr(object):
             return 'isl.ast_expr("""%s""")' % s
         else:
             return 'isl.ast_expr("%s")' % s
+    def access(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr_list:
+                arg1 = ast_expr_list(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_access(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_list_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def add(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_add(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def address_of(arg0):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_address_of(isl.isl_ast_expr_copy(arg0.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def and_then(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_and_then(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def call(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr_list:
+                arg1 = ast_expr_list(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_call(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_list_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def div(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_div(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def eq(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_eq(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    @staticmethod
+    def from_id(arg0):
+        try:
+            if not arg0.__class__ is id:
+                arg0 = id(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_from_id(isl.isl_id_copy(arg0.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    @staticmethod
+    def from_val(arg0):
+        try:
+            if not arg0.__class__ is val:
+                arg0 = val(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_from_val(isl.isl_val_copy(arg0.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def ge(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_ge(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def gt(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_gt(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def id(arg0):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_get_id(arg0.ptr)
+        obj = id(ctx=ctx, ptr=res)
+        return obj
+    def get_id(arg0):
+        return arg0.id()
+    def le(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_le(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def lt(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_lt(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def mul(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_mul(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def neg(arg0):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_neg(isl.isl_ast_expr_copy(arg0.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def or_else(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_or_else(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def pdiv_q(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_pdiv_q(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def pdiv_r(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_pdiv_r(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def sub(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_sub(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def substitute_ids(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id_to_ast_expr:
+                arg1 = id_to_ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_substitute_ids(isl.isl_ast_expr_copy(arg0.ptr), isl.isl_id_to_ast_expr_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
     def to_C_str(arg0):
         try:
             if not arg0.__class__ is ast_expr:
@@ -5701,9 +6759,77 @@ class ast_expr(object):
         string = cast(res, c_char_p).value.decode('ascii')
         libc.free(res)
         return string
+    def to_list(arg0):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_to_list(isl.isl_ast_expr_copy(arg0.ptr))
+        obj = ast_expr_list(ctx=ctx, ptr=res)
+        return obj
+    def val(arg0):
+        try:
+            if not arg0.__class__ is ast_expr:
+                arg0 = ast_expr(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_get_val(arg0.ptr)
+        obj = val(ctx=ctx, ptr=res)
+        return obj
+    def get_val(arg0):
+        return arg0.val()
 
+isl.isl_ast_expr_access.restype = c_void_p
+isl.isl_ast_expr_access.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_add.restype = c_void_p
+isl.isl_ast_expr_add.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_address_of.restype = c_void_p
+isl.isl_ast_expr_address_of.argtypes = [c_void_p]
+isl.isl_ast_expr_and_then.restype = c_void_p
+isl.isl_ast_expr_and_then.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_call.restype = c_void_p
+isl.isl_ast_expr_call.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_div.restype = c_void_p
+isl.isl_ast_expr_div.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_eq.restype = c_void_p
+isl.isl_ast_expr_eq.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_from_id.restype = c_void_p
+isl.isl_ast_expr_from_id.argtypes = [c_void_p]
+isl.isl_ast_expr_from_val.restype = c_void_p
+isl.isl_ast_expr_from_val.argtypes = [c_void_p]
+isl.isl_ast_expr_ge.restype = c_void_p
+isl.isl_ast_expr_ge.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_gt.restype = c_void_p
+isl.isl_ast_expr_gt.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_get_id.restype = c_void_p
+isl.isl_ast_expr_get_id.argtypes = [c_void_p]
+isl.isl_ast_expr_le.restype = c_void_p
+isl.isl_ast_expr_le.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_lt.restype = c_void_p
+isl.isl_ast_expr_lt.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_mul.restype = c_void_p
+isl.isl_ast_expr_mul.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_neg.restype = c_void_p
+isl.isl_ast_expr_neg.argtypes = [c_void_p]
+isl.isl_ast_expr_or_else.restype = c_void_p
+isl.isl_ast_expr_or_else.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_pdiv_q.restype = c_void_p
+isl.isl_ast_expr_pdiv_q.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_pdiv_r.restype = c_void_p
+isl.isl_ast_expr_pdiv_r.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_sub.restype = c_void_p
+isl.isl_ast_expr_sub.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_substitute_ids.restype = c_void_p
+isl.isl_ast_expr_substitute_ids.argtypes = [c_void_p, c_void_p]
 isl.isl_ast_expr_to_C_str.restype = POINTER(c_char)
 isl.isl_ast_expr_to_C_str.argtypes = [c_void_p]
+isl.isl_ast_expr_to_list.restype = c_void_p
+isl.isl_ast_expr_to_list.argtypes = [c_void_p]
+isl.isl_ast_expr_get_val.restype = c_void_p
+isl.isl_ast_expr_get_val.argtypes = [c_void_p]
 isl.isl_ast_expr_copy.restype = c_void_p
 isl.isl_ast_expr_copy.argtypes = [c_void_p]
 isl.isl_ast_expr_free.restype = c_void_p
@@ -5811,6 +6937,230 @@ isl.isl_ast_expr_free.restype = c_void_p
 isl.isl_ast_expr_free.argtypes = [c_void_p]
 isl.isl_ast_expr_to_str.restype = POINTER(c_char)
 isl.isl_ast_expr_to_str.argtypes = [c_void_p]
+
+class ast_expr_list(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        if len(args) == 1 and type(args[0]) == int:
+            self.ctx = Context.getDefaultInstance()
+            self.ptr = isl.isl_ast_expr_list_alloc(self.ctx, args[0])
+            return
+        if len(args) == 1 and args[0].__class__ is ast_expr:
+            self.ctx = Context.getDefaultInstance()
+            self.ptr = isl.isl_ast_expr_list_from_ast_expr(isl.isl_ast_expr_copy(args[0].ptr))
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_ast_expr_list_free(self.ptr)
+    def __str__(arg0):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        ptr = isl.isl_ast_expr_list_to_str(arg0.ptr)
+        res = cast(ptr, c_char_p).value.decode('ascii')
+        libc.free(ptr)
+        return res
+    def __repr__(self):
+        s = str(self)
+        if '"' in s:
+            return 'isl.ast_expr_list("""%s""")' % s
+        else:
+            return 'isl.ast_expr_list("%s")' % s
+    def add(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_add(isl.isl_ast_expr_list_copy(arg0.ptr), isl.isl_ast_expr_copy(arg1.ptr))
+        obj = ast_expr_list(ctx=ctx, ptr=res)
+        return obj
+    def at(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_get_at(arg0.ptr, arg1)
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def get_at(arg0, arg1):
+        return arg0.at(arg1)
+    def clear(arg0):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_clear(isl.isl_ast_expr_list_copy(arg0.ptr))
+        obj = ast_expr_list(ctx=ctx, ptr=res)
+        return obj
+    def concat(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr_list:
+                arg1 = ast_expr_list(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_concat(isl.isl_ast_expr_list_copy(arg0.ptr), isl.isl_ast_expr_list_copy(arg1.ptr))
+        obj = ast_expr_list(ctx=ctx, ptr=res)
+        return obj
+    def drop(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_drop(isl.isl_ast_expr_list_copy(arg0.ptr), arg1, arg2)
+        obj = ast_expr_list(ctx=ctx, ptr=res)
+        return obj
+    def foreach(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = ast_expr(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_foreach(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def foreach_scc(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = ast_expr(ctx=arg0.ctx, ptr=isl.isl_ast_expr_copy(cb_arg0))
+            cb_arg1 = ast_expr(ctx=arg0.ctx, ptr=isl.isl_ast_expr_copy(cb_arg1))
+            try:
+                res = arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 1 if res else 0
+        cb1 = fn(cb_func)
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = ast_expr_list(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg2(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb2 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_foreach_scc(arg0.ptr, cb1, None, cb2, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def insert(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is ast_expr:
+                arg2 = ast_expr(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_insert(isl.isl_ast_expr_list_copy(arg0.ptr), arg1, isl.isl_ast_expr_copy(arg2.ptr))
+        obj = ast_expr_list(ctx=ctx, ptr=res)
+        return obj
+    def set_at(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is ast_expr:
+                arg2 = ast_expr(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_set_at(isl.isl_ast_expr_list_copy(arg0.ptr), arg1, isl.isl_ast_expr_copy(arg2.ptr))
+        obj = ast_expr_list(ctx=ctx, ptr=res)
+        return obj
+    def size(arg0):
+        try:
+            if not arg0.__class__ is ast_expr_list:
+                arg0 = ast_expr_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_expr_list_size(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
+
+isl.isl_ast_expr_list_alloc.restype = c_void_p
+isl.isl_ast_expr_list_alloc.argtypes = [Context, c_int]
+isl.isl_ast_expr_list_from_ast_expr.restype = c_void_p
+isl.isl_ast_expr_list_from_ast_expr.argtypes = [c_void_p]
+isl.isl_ast_expr_list_add.restype = c_void_p
+isl.isl_ast_expr_list_add.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_list_get_at.restype = c_void_p
+isl.isl_ast_expr_list_get_at.argtypes = [c_void_p, c_int]
+isl.isl_ast_expr_list_clear.restype = c_void_p
+isl.isl_ast_expr_list_clear.argtypes = [c_void_p]
+isl.isl_ast_expr_list_concat.restype = c_void_p
+isl.isl_ast_expr_list_concat.argtypes = [c_void_p, c_void_p]
+isl.isl_ast_expr_list_drop.restype = c_void_p
+isl.isl_ast_expr_list_drop.argtypes = [c_void_p, c_int, c_int]
+isl.isl_ast_expr_list_foreach.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_expr_list_foreach_scc.argtypes = [c_void_p, c_void_p, c_void_p, c_void_p, c_void_p]
+isl.isl_ast_expr_list_insert.restype = c_void_p
+isl.isl_ast_expr_list_insert.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_ast_expr_list_set_at.restype = c_void_p
+isl.isl_ast_expr_list_set_at.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_ast_expr_list_size.argtypes = [c_void_p]
+isl.isl_ast_expr_list_copy.restype = c_void_p
+isl.isl_ast_expr_list_copy.argtypes = [c_void_p]
+isl.isl_ast_expr_list_free.restype = c_void_p
+isl.isl_ast_expr_list_free.argtypes = [c_void_p]
+isl.isl_ast_expr_list_to_str.restype = POINTER(c_char)
+isl.isl_ast_expr_list_to_str.argtypes = [c_void_p]
 
 class ast_expr_op(ast_expr):
     def __init__(self, *args, **keywords):
@@ -7033,6 +8383,18 @@ class ast_node(object):
             return 'isl.ast_node("""%s""")' % s
         else:
             return 'isl.ast_node("%s")' % s
+    def annotation(arg0):
+        try:
+            if not arg0.__class__ is ast_node:
+                arg0 = ast_node(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_node_get_annotation(arg0.ptr)
+        obj = id(ctx=ctx, ptr=res)
+        return obj
+    def get_annotation(arg0):
+        return arg0.annotation()
     def map_descendant_bottom_up(arg0, arg1):
         try:
             if not arg0.__class__ is ast_node:
@@ -7054,6 +8416,41 @@ class ast_node(object):
         res = isl.isl_ast_node_map_descendant_bottom_up(isl.isl_ast_node_copy(arg0.ptr), cb1, None)
         if exc_info[0] is not None:
             raise exc_info[0]
+        obj = ast_node(ctx=ctx, ptr=res)
+        return obj
+    def print(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is ast_node:
+                arg0 = ast_node(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is printer:
+                arg1 = printer(arg1)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is ast_print_options:
+                arg2 = ast_print_options(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_node_print(arg0.ptr, isl.isl_printer_copy(arg1.ptr), isl.isl_ast_print_options_copy(arg2.ptr))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def set_annotation(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_node:
+                arg0 = ast_node(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id:
+                arg1 = id(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_node_set_annotation(isl.isl_ast_node_copy(arg0.ptr), isl.isl_id_copy(arg1.ptr))
         obj = ast_node(ctx=ctx, ptr=res)
         return obj
     def to_C_str(arg0):
@@ -7080,8 +8477,14 @@ class ast_node(object):
         obj = ast_node_list(ctx=ctx, ptr=res)
         return obj
 
+isl.isl_ast_node_get_annotation.restype = c_void_p
+isl.isl_ast_node_get_annotation.argtypes = [c_void_p]
 isl.isl_ast_node_map_descendant_bottom_up.restype = c_void_p
 isl.isl_ast_node_map_descendant_bottom_up.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_node_print.restype = c_void_p
+isl.isl_ast_node_print.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_node_set_annotation.restype = c_void_p
+isl.isl_ast_node_set_annotation.argtypes = [c_void_p, c_void_p]
 isl.isl_ast_node_to_C_str.restype = POINTER(c_char)
 isl.isl_ast_node_to_C_str.argtypes = [c_void_p]
 isl.isl_ast_node_to_list.restype = c_void_p
@@ -7249,6 +8652,26 @@ class ast_node_for(ast_node):
         return obj
     def get_iterator(arg0):
         return arg0.iterator()
+    def print(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is ast_node:
+                arg0 = ast_node(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is printer:
+                arg1 = printer(arg1)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is ast_print_options:
+                arg2 = ast_print_options(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_node_for_print(arg0.ptr, isl.isl_printer_copy(arg1.ptr), isl.isl_ast_print_options_copy(arg2.ptr))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
 
 isl.isl_ast_node_for_get_body.restype = c_void_p
 isl.isl_ast_node_for_get_body.argtypes = [c_void_p]
@@ -7261,6 +8684,8 @@ isl.isl_ast_node_for_get_init.argtypes = [c_void_p]
 isl.isl_ast_node_for_is_degenerate.argtypes = [c_void_p]
 isl.isl_ast_node_for_get_iterator.restype = c_void_p
 isl.isl_ast_node_for_get_iterator.argtypes = [c_void_p]
+isl.isl_ast_node_for_print.restype = c_void_p
+isl.isl_ast_node_for_print.argtypes = [c_void_p, c_void_p, c_void_p]
 isl.isl_ast_node_copy.restype = c_void_p
 isl.isl_ast_node_copy.argtypes = [c_void_p]
 isl.isl_ast_node_free.restype = c_void_p
@@ -7701,6 +9126,135 @@ isl.isl_ast_node_free.restype = c_void_p
 isl.isl_ast_node_free.argtypes = [c_void_p]
 isl.isl_ast_node_to_str.restype = POINTER(c_char)
 isl.isl_ast_node_to_str.argtypes = [c_void_p]
+
+class ast_print_options(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_ast_print_options_free(self.ptr)
+    def copy_callbacks(self, obj):
+        if hasattr(obj, 'print_user'):
+            self.print_user = obj.print_user
+        if hasattr(obj, 'print_for'):
+            self.print_for = obj.print_for
+    def set_print_user(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_print_options:
+                arg0 = ast_print_options(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_void_p, c_void_p, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2, cb_arg3):
+            cb_arg0 = printer(ctx=arg0.ctx, ptr=(cb_arg0))
+            cb_arg1 = ast_print_options(ctx=arg0.ctx, ptr=(cb_arg1))
+            cb_arg2 = ast_node(ctx=arg0.ctx, ptr=isl.isl_ast_node_copy(cb_arg2))
+            try:
+                res = arg1(cb_arg0, cb_arg1, cb_arg2)
+            except BaseException as e:
+                exc_info[0] = e
+                return None
+            return isl.isl_printer_copy(res.ptr)
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_print_options_set_print_user(isl.isl_ast_print_options_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if hasattr(arg0, 'print_user') and arg0.print_user['exc_info'] != None:
+            exc_info = arg0.print_user['exc_info'][0]
+            arg0.print_user['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'print_for') and arg0.print_for['exc_info'] != None:
+            exc_info = arg0.print_for['exc_info'][0]
+            arg0.print_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_print_options(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        obj.print_user = { 'func': cb1, 'exc_info': exc_info }
+        return obj
+    def set_print_for(arg0, arg1):
+        try:
+            if not arg0.__class__ is ast_print_options:
+                arg0 = ast_print_options(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_void_p, c_void_p, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2, cb_arg3):
+            cb_arg0 = printer(ctx=arg0.ctx, ptr=(cb_arg0))
+            cb_arg1 = ast_print_options(ctx=arg0.ctx, ptr=(cb_arg1))
+            cb_arg2 = ast_node(ctx=arg0.ctx, ptr=isl.isl_ast_node_copy(cb_arg2))
+            try:
+                res = arg1(cb_arg0, cb_arg1, cb_arg2)
+            except BaseException as e:
+                exc_info[0] = e
+                return None
+            return isl.isl_printer_copy(res.ptr)
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_ast_print_options_set_print_for(isl.isl_ast_print_options_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if hasattr(arg0, 'print_user') and arg0.print_user['exc_info'] != None:
+            exc_info = arg0.print_user['exc_info'][0]
+            arg0.print_user['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'print_for') and arg0.print_for['exc_info'] != None:
+            exc_info = arg0.print_for['exc_info'][0]
+            arg0.print_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_print_options(ctx=ctx, ptr=res)
+        obj.copy_callbacks(arg0)
+        obj.print_for = { 'func': cb1, 'exc_info': exc_info }
+        return obj
+    @staticmethod
+    def alloc():
+        ctx = Context.getDefaultInstance()
+        res = isl.isl_ast_print_options_alloc(ctx)
+        obj = ast_print_options(ctx=ctx, ptr=res)
+        return obj
+    def free(arg0):
+        try:
+            if not arg0.__class__ is ast_print_options:
+                arg0 = ast_print_options(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_ast_print_options_free(isl.isl_ast_print_options_copy(arg0.ptr))
+        if hasattr(arg0, 'print_user') and arg0.print_user['exc_info'] != None:
+            exc_info = arg0.print_user['exc_info'][0]
+            arg0.print_user['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        if hasattr(arg0, 'print_for') and arg0.print_for['exc_info'] != None:
+            exc_info = arg0.print_for['exc_info'][0]
+            arg0.print_for['exc_info'][0] = None
+            if exc_info is not None:
+                raise exc_info
+        obj = ast_print_options(ctx=ctx, ptr=res)
+        return obj
+
+isl.isl_ast_print_options_set_print_user.restype = c_void_p
+isl.isl_ast_print_options_set_print_user.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_print_options_set_print_for.restype = c_void_p
+isl.isl_ast_print_options_set_print_for.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_ast_print_options_alloc.restype = c_void_p
+isl.isl_ast_print_options_alloc.argtypes = [Context]
+isl.isl_ast_print_options_free.restype = c_void_p
+isl.isl_ast_print_options_free.argtypes = [c_void_p]
+isl.isl_ast_print_options_copy.restype = c_void_p
+isl.isl_ast_print_options_copy.argtypes = [c_void_p]
+isl.isl_ast_print_options_free.restype = c_void_p
+isl.isl_ast_print_options_free.argtypes = [c_void_p]
 
 class union_map(object):
     def __init__(self, *args, **keywords):
@@ -8475,6 +10029,66 @@ class union_map(object):
         if res < 0:
             raise Error
         return bool(res)
+    def lex_ge_union_map(arg0, arg1):
+        try:
+            if not arg0.__class__ is union_map:
+                arg0 = union_map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is union_map:
+                arg1 = union_map(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_union_map_lex_ge_union_map(isl.isl_union_map_copy(arg0.ptr), isl.isl_union_map_copy(arg1.ptr))
+        obj = union_map(ctx=ctx, ptr=res)
+        return obj
+    def lex_gt_union_map(arg0, arg1):
+        try:
+            if not arg0.__class__ is union_map:
+                arg0 = union_map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is union_map:
+                arg1 = union_map(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_union_map_lex_gt_union_map(isl.isl_union_map_copy(arg0.ptr), isl.isl_union_map_copy(arg1.ptr))
+        obj = union_map(ctx=ctx, ptr=res)
+        return obj
+    def lex_le_union_map(arg0, arg1):
+        try:
+            if not arg0.__class__ is union_map:
+                arg0 = union_map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is union_map:
+                arg1 = union_map(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_union_map_lex_le_union_map(isl.isl_union_map_copy(arg0.ptr), isl.isl_union_map_copy(arg1.ptr))
+        obj = union_map(ctx=ctx, ptr=res)
+        return obj
+    def lex_lt_union_map(arg0, arg1):
+        try:
+            if not arg0.__class__ is union_map:
+                arg0 = union_map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is union_map:
+                arg1 = union_map(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_union_map_lex_lt_union_map(isl.isl_union_map_copy(arg0.ptr), isl.isl_union_map_copy(arg1.ptr))
+        obj = union_map(ctx=ctx, ptr=res)
+        return obj
     def lexmax(arg0):
         try:
             if not arg0.__class__ is union_map:
@@ -8961,6 +10575,14 @@ isl.isl_union_map_is_single_valued.argtypes = [c_void_p]
 isl.isl_union_map_is_strict_subset.argtypes = [c_void_p, c_void_p]
 isl.isl_union_map_is_subset.argtypes = [c_void_p, c_void_p]
 isl.isl_union_map_isa_map.argtypes = [c_void_p]
+isl.isl_union_map_lex_ge_union_map.restype = c_void_p
+isl.isl_union_map_lex_ge_union_map.argtypes = [c_void_p, c_void_p]
+isl.isl_union_map_lex_gt_union_map.restype = c_void_p
+isl.isl_union_map_lex_gt_union_map.argtypes = [c_void_p, c_void_p]
+isl.isl_union_map_lex_le_union_map.restype = c_void_p
+isl.isl_union_map_lex_le_union_map.argtypes = [c_void_p, c_void_p]
+isl.isl_union_map_lex_lt_union_map.restype = c_void_p
+isl.isl_union_map_lex_lt_union_map.argtypes = [c_void_p, c_void_p]
 isl.isl_union_map_lexmax.restype = c_void_p
 isl.isl_union_map_lexmax.argtypes = [c_void_p]
 isl.isl_union_map_lexmin.restype = c_void_p
@@ -9066,6 +10688,21 @@ class map(union_map):
             return 'isl.map("""%s""")' % s
         else:
             return 'isl.map("%s")' % s
+    def add_constraint(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is constraint:
+                arg1 = constraint(arg1)
+        except:
+            return union_map(arg0).add_constraint(arg1)
+        ctx = arg0.ctx
+        res = isl.isl_map_add_constraint(isl.isl_map_copy(arg0.ptr), isl.isl_constraint_copy(arg1.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def affine_hull(arg0):
         try:
             if not arg0.__class__ is map:
@@ -9116,6 +10753,18 @@ class map(union_map):
         res = isl.isl_map_as_pw_multi_aff(isl.isl_map_copy(arg0.ptr))
         obj = pw_multi_aff(ctx=ctx, ptr=res)
         return obj
+    def basic_map_list(arg0):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_get_basic_map_list(arg0.ptr)
+        obj = basic_map_list(ctx=ctx, ptr=res)
+        return obj
+    def get_basic_map_list(arg0):
+        return arg0.basic_map_list()
     def bind_domain(arg0, arg1):
         try:
             if not arg0.__class__ is map:
@@ -9166,6 +10815,16 @@ class map(union_map):
         res = isl.isl_map_complement(isl.isl_map_copy(arg0.ptr))
         obj = map(ctx=ctx, ptr=res)
         return obj
+    def convex_hull(arg0):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_convex_hull(isl.isl_map_copy(arg0.ptr))
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
     def curry(arg0):
         try:
             if not arg0.__class__ is map:
@@ -9196,6 +10855,63 @@ class map(union_map):
         res = isl.isl_map_detect_equalities(isl.isl_map_copy(arg0.ptr))
         obj = map(ctx=ctx, ptr=res)
         return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
+    def dim_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_get_dim_id(arg0.ptr, arg1, arg2)
+        obj = id(ctx=ctx, ptr=res)
+        return obj
+    def get_dim_id(arg0, arg1, arg2):
+        return arg0.dim_id(arg1, arg2)
+    def dim_max(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_dim_max(isl.isl_map_copy(arg0.ptr), arg1)
+        obj = pw_aff(ctx=ctx, ptr=res)
+        return obj
+    def dim_min(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_dim_min(isl.isl_map_copy(arg0.ptr), arg1)
+        obj = pw_aff(ctx=ctx, ptr=res)
+        return obj
+    def dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_get_dim_name(arg0.ptr, arg1, arg2)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_dim_name(arg0, arg1, arg2):
+        return arg0.dim_name(arg1, arg2)
     def domain(arg0):
         try:
             if not arg0.__class__ is map:
@@ -9328,6 +11044,29 @@ class map(union_map):
         res = isl.isl_map_factor_range(isl.isl_map_copy(arg0.ptr))
         obj = map(ctx=ctx, ptr=res)
         return obj
+    def find_dim_by_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is id:
+                arg2 = id(arg2)
+        except:
+            return union_map(arg0).find_dim_by_id(arg1, arg2)
+        ctx = arg0.ctx
+        res = isl.isl_map_find_dim_by_id(arg0.ptr, arg1, arg2.ptr)
+        return res
+    def find_dim_by_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_find_dim_by_name(arg0.ptr, arg1, arg2.encode('ascii'))
+        return res
     def fixed_power(*args):
         if len(args) == 2 and (args[1].__class__ is val or type(args[1]) == int):
             args = list(args)
@@ -9444,6 +11183,28 @@ class map(union_map):
         res = isl.isl_map_gist_params(isl.isl_map_copy(arg0.ptr), isl.isl_set_copy(arg1.ptr))
         obj = map(ctx=ctx, ptr=res)
         return obj
+    def has_dim_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_has_dim_id(arg0.ptr, arg1, arg2)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def has_dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_has_dim_name(arg0.ptr, arg1, arg2)
+        if res < 0:
+            raise Error
+        return bool(res)
     def has_domain_tuple_id(arg0):
         try:
             if not arg0.__class__ is map:
@@ -9466,6 +11227,39 @@ class map(union_map):
         if res < 0:
             raise Error
         return bool(res)
+    def has_tuple_id(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_has_tuple_id(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def has_tuple_name(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_has_tuple_name(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return bool(res)
+    @staticmethod
+    def identity(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_identity(isl.isl_space_copy(arg0.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def intersect(arg0, arg1):
         try:
             if not arg0.__class__ is map:
@@ -9737,6 +11531,21 @@ class map(union_map):
             obj = map(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def lex_ge_map(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is map:
+                arg1 = map(arg1)
+        except:
+            return union_map(arg0).lex_ge_map(arg1)
+        ctx = arg0.ctx
+        res = isl.isl_map_lex_ge_map(isl.isl_map_copy(arg0.ptr), isl.isl_map_copy(arg1.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def lex_gt_at(*args):
         if len(args) == 2 and args[1].__class__ is multi_pw_aff:
             args = list(args)
@@ -9750,6 +11559,21 @@ class map(union_map):
             obj = map(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def lex_gt_map(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is map:
+                arg1 = map(arg1)
+        except:
+            return union_map(arg0).lex_gt_map(arg1)
+        ctx = arg0.ctx
+        res = isl.isl_map_lex_gt_map(isl.isl_map_copy(arg0.ptr), isl.isl_map_copy(arg1.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def lex_le_at(*args):
         if len(args) == 2 and args[1].__class__ is multi_pw_aff:
             args = list(args)
@@ -9763,6 +11587,21 @@ class map(union_map):
             obj = map(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def lex_le_map(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is map:
+                arg1 = map(arg1)
+        except:
+            return union_map(arg0).lex_le_map(arg1)
+        ctx = arg0.ctx
+        res = isl.isl_map_lex_le_map(isl.isl_map_copy(arg0.ptr), isl.isl_map_copy(arg1.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def lex_lt_at(*args):
         if len(args) == 2 and args[1].__class__ is multi_pw_aff:
             args = list(args)
@@ -9776,6 +11615,21 @@ class map(union_map):
             obj = map(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def lex_lt_map(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is map:
+                arg1 = map(arg1)
+        except:
+            return union_map(arg0).lex_lt_map(arg1)
+        ctx = arg0.ctx
+        res = isl.isl_map_lex_lt_map(isl.isl_map_copy(arg0.ptr), isl.isl_map_copy(arg1.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def lexmax(arg0):
         try:
             if not arg0.__class__ is map:
@@ -9954,6 +11808,16 @@ class map(union_map):
         res = isl.isl_map_product(isl.isl_map_copy(arg0.ptr), isl.isl_map_copy(arg1.ptr))
         obj = map(ctx=ctx, ptr=res)
         return obj
+    def project_out(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_project_out(isl.isl_map_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def project_out_all_params(arg0):
         try:
             if not arg0.__class__ is map:
@@ -10095,6 +11959,26 @@ class map(union_map):
         return obj
     def get_range_tuple_id(arg0):
         return arg0.range_tuple_id()
+    def remove_divs(arg0):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_remove_divs(isl.isl_map_copy(arg0.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
+    def reset_tuple_id(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_reset_tuple_id(isl.isl_map_copy(arg0.ptr), arg1)
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def reverse(arg0):
         try:
             if not arg0.__class__ is map:
@@ -10114,6 +11998,31 @@ class map(union_map):
         ctx = arg0.ctx
         res = isl.isl_map_sample(isl.isl_map_copy(arg0.ptr))
         obj = basic_map(ctx=ctx, ptr=res)
+        return obj
+    def set_dim_id(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        try:
+            if not arg3.__class__ is id:
+                arg3 = id(arg3)
+        except:
+            return union_map(arg0).set_dim_id(arg1, arg2, arg3)
+        ctx = arg0.ctx
+        res = isl.isl_map_set_dim_id(isl.isl_map_copy(arg0.ptr), arg1, arg2, isl.isl_id_copy(arg3.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
+    def set_dim_name(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_set_dim_name(isl.isl_map_copy(arg0.ptr), arg1, arg2, arg3.encode('ascii'))
+        obj = map(ctx=ctx, ptr=res)
         return obj
     def set_domain_tuple(*args):
         if len(args) == 2 and (args[1].__class__ is id or type(args[1]) == str):
@@ -10151,6 +12060,31 @@ class map(union_map):
             obj = map(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def set_tuple_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is id:
+                arg2 = id(arg2)
+        except:
+            return union_map(arg0).set_tuple_id(arg1, arg2)
+        ctx = arg0.ctx
+        res = isl.isl_map_set_tuple_id(isl.isl_map_copy(arg0.ptr), arg1, isl.isl_id_copy(arg2.ptr))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
+    def set_tuple_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_set_tuple_name(isl.isl_map_copy(arg0.ptr), arg1, arg2.encode('ascii'))
+        obj = map(ctx=ctx, ptr=res)
+        return obj
     def space(arg0):
         try:
             if not arg0.__class__ is map:
@@ -10198,6 +12132,20 @@ class map(union_map):
         res = isl.isl_map_to_union_map(isl.isl_map_copy(arg0.ptr))
         obj = union_map(ctx=ctx, ptr=res)
         return obj
+    def tuple_name(arg0, arg1):
+        try:
+            if not arg0.__class__ is map:
+                arg0 = map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_map_get_tuple_name(arg0.ptr, arg1)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_tuple_name(arg0, arg1):
+        return arg0.tuple_name(arg1)
     def uncurry(arg0):
         try:
             if not arg0.__class__ is map:
@@ -10282,6 +12230,8 @@ isl.isl_map_from_basic_map.restype = c_void_p
 isl.isl_map_from_basic_map.argtypes = [c_void_p]
 isl.isl_map_read_from_str.restype = c_void_p
 isl.isl_map_read_from_str.argtypes = [Context, c_char_p]
+isl.isl_map_add_constraint.restype = c_void_p
+isl.isl_map_add_constraint.argtypes = [c_void_p, c_void_p]
 isl.isl_map_affine_hull.restype = c_void_p
 isl.isl_map_affine_hull.argtypes = [c_void_p]
 isl.isl_map_apply_domain.restype = c_void_p
@@ -10290,6 +12240,8 @@ isl.isl_map_apply_range.restype = c_void_p
 isl.isl_map_apply_range.argtypes = [c_void_p, c_void_p]
 isl.isl_map_as_pw_multi_aff.restype = c_void_p
 isl.isl_map_as_pw_multi_aff.argtypes = [c_void_p]
+isl.isl_map_get_basic_map_list.restype = c_void_p
+isl.isl_map_get_basic_map_list.argtypes = [c_void_p]
 isl.isl_map_bind_domain.restype = c_void_p
 isl.isl_map_bind_domain.argtypes = [c_void_p, c_void_p]
 isl.isl_map_bind_range.restype = c_void_p
@@ -10298,12 +12250,23 @@ isl.isl_map_coalesce.restype = c_void_p
 isl.isl_map_coalesce.argtypes = [c_void_p]
 isl.isl_map_complement.restype = c_void_p
 isl.isl_map_complement.argtypes = [c_void_p]
+isl.isl_map_convex_hull.restype = c_void_p
+isl.isl_map_convex_hull.argtypes = [c_void_p]
 isl.isl_map_curry.restype = c_void_p
 isl.isl_map_curry.argtypes = [c_void_p]
 isl.isl_map_deltas.restype = c_void_p
 isl.isl_map_deltas.argtypes = [c_void_p]
 isl.isl_map_detect_equalities.restype = c_void_p
 isl.isl_map_detect_equalities.argtypes = [c_void_p]
+isl.isl_map_dim.argtypes = [c_void_p, c_int]
+isl.isl_map_get_dim_id.restype = c_void_p
+isl.isl_map_get_dim_id.argtypes = [c_void_p, c_int, c_int]
+isl.isl_map_dim_max.restype = c_void_p
+isl.isl_map_dim_max.argtypes = [c_void_p, c_int]
+isl.isl_map_dim_min.restype = c_void_p
+isl.isl_map_dim_min.argtypes = [c_void_p, c_int]
+isl.isl_map_get_dim_name.restype = POINTER(c_char)
+isl.isl_map_get_dim_name.argtypes = [c_void_p, c_int, c_int]
 isl.isl_map_domain.restype = c_void_p
 isl.isl_map_domain.argtypes = [c_void_p]
 isl.isl_map_domain_factor_domain.restype = c_void_p
@@ -10327,6 +12290,8 @@ isl.isl_map_factor_domain.restype = c_void_p
 isl.isl_map_factor_domain.argtypes = [c_void_p]
 isl.isl_map_factor_range.restype = c_void_p
 isl.isl_map_factor_range.argtypes = [c_void_p]
+isl.isl_map_find_dim_by_id.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_map_find_dim_by_name.argtypes = [c_void_p, c_int, c_char_p]
 isl.isl_map_fixed_power_val.restype = c_void_p
 isl.isl_map_fixed_power_val.argtypes = [c_void_p, c_void_p]
 isl.isl_map_flatten.restype = c_void_p
@@ -10342,8 +12307,14 @@ isl.isl_map_gist_domain.restype = c_void_p
 isl.isl_map_gist_domain.argtypes = [c_void_p, c_void_p]
 isl.isl_map_gist_params.restype = c_void_p
 isl.isl_map_gist_params.argtypes = [c_void_p, c_void_p]
+isl.isl_map_has_dim_id.argtypes = [c_void_p, c_int, c_int]
+isl.isl_map_has_dim_name.argtypes = [c_void_p, c_int, c_int]
 isl.isl_map_has_domain_tuple_id.argtypes = [c_void_p]
 isl.isl_map_has_range_tuple_id.argtypes = [c_void_p]
+isl.isl_map_has_tuple_id.argtypes = [c_void_p, c_int]
+isl.isl_map_has_tuple_name.argtypes = [c_void_p, c_int]
+isl.isl_map_identity.restype = c_void_p
+isl.isl_map_identity.argtypes = [c_void_p]
 isl.isl_map_intersect.restype = c_void_p
 isl.isl_map_intersect.argtypes = [c_void_p, c_void_p]
 isl.isl_map_intersect_domain.restype = c_void_p
@@ -10374,12 +12345,20 @@ isl.isl_map_is_strict_subset.argtypes = [c_void_p, c_void_p]
 isl.isl_map_is_subset.argtypes = [c_void_p, c_void_p]
 isl.isl_map_lex_ge_at_multi_pw_aff.restype = c_void_p
 isl.isl_map_lex_ge_at_multi_pw_aff.argtypes = [c_void_p, c_void_p]
+isl.isl_map_lex_ge_map.restype = c_void_p
+isl.isl_map_lex_ge_map.argtypes = [c_void_p, c_void_p]
 isl.isl_map_lex_gt_at_multi_pw_aff.restype = c_void_p
 isl.isl_map_lex_gt_at_multi_pw_aff.argtypes = [c_void_p, c_void_p]
+isl.isl_map_lex_gt_map.restype = c_void_p
+isl.isl_map_lex_gt_map.argtypes = [c_void_p, c_void_p]
 isl.isl_map_lex_le_at_multi_pw_aff.restype = c_void_p
 isl.isl_map_lex_le_at_multi_pw_aff.argtypes = [c_void_p, c_void_p]
+isl.isl_map_lex_le_map.restype = c_void_p
+isl.isl_map_lex_le_map.argtypes = [c_void_p, c_void_p]
 isl.isl_map_lex_lt_at_multi_pw_aff.restype = c_void_p
 isl.isl_map_lex_lt_at_multi_pw_aff.argtypes = [c_void_p, c_void_p]
+isl.isl_map_lex_lt_map.restype = c_void_p
+isl.isl_map_lex_lt_map.argtypes = [c_void_p, c_void_p]
 isl.isl_map_lexmax.restype = c_void_p
 isl.isl_map_lexmax.argtypes = [c_void_p]
 isl.isl_map_lexmax_pw_multi_aff.restype = c_void_p
@@ -10411,6 +12390,8 @@ isl.isl_map_preimage_range_pw_multi_aff.restype = c_void_p
 isl.isl_map_preimage_range_pw_multi_aff.argtypes = [c_void_p, c_void_p]
 isl.isl_map_product.restype = c_void_p
 isl.isl_map_product.argtypes = [c_void_p, c_void_p]
+isl.isl_map_project_out.restype = c_void_p
+isl.isl_map_project_out.argtypes = [c_void_p, c_int, c_int, c_int]
 isl.isl_map_project_out_all_params.restype = c_void_p
 isl.isl_map_project_out_all_params.argtypes = [c_void_p]
 isl.isl_map_project_out_param_id.restype = c_void_p
@@ -10434,14 +12415,26 @@ isl.isl_map_get_range_simple_fixed_box_hull.argtypes = [c_void_p]
 isl.isl_map_range_tuple_dim.argtypes = [c_void_p]
 isl.isl_map_get_range_tuple_id.restype = c_void_p
 isl.isl_map_get_range_tuple_id.argtypes = [c_void_p]
+isl.isl_map_remove_divs.restype = c_void_p
+isl.isl_map_remove_divs.argtypes = [c_void_p]
+isl.isl_map_reset_tuple_id.restype = c_void_p
+isl.isl_map_reset_tuple_id.argtypes = [c_void_p, c_int]
 isl.isl_map_reverse.restype = c_void_p
 isl.isl_map_reverse.argtypes = [c_void_p]
 isl.isl_map_sample.restype = c_void_p
 isl.isl_map_sample.argtypes = [c_void_p]
+isl.isl_map_set_dim_id.restype = c_void_p
+isl.isl_map_set_dim_id.argtypes = [c_void_p, c_int, c_int, c_void_p]
+isl.isl_map_set_dim_name.restype = c_void_p
+isl.isl_map_set_dim_name.argtypes = [c_void_p, c_int, c_int, c_char_p]
 isl.isl_map_set_domain_tuple_id.restype = c_void_p
 isl.isl_map_set_domain_tuple_id.argtypes = [c_void_p, c_void_p]
 isl.isl_map_set_range_tuple_id.restype = c_void_p
 isl.isl_map_set_range_tuple_id.argtypes = [c_void_p, c_void_p]
+isl.isl_map_set_tuple_id.restype = c_void_p
+isl.isl_map_set_tuple_id.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_map_set_tuple_name.restype = c_void_p
+isl.isl_map_set_tuple_name.argtypes = [c_void_p, c_int, c_char_p]
 isl.isl_map_get_space.restype = c_void_p
 isl.isl_map_get_space.argtypes = [c_void_p]
 isl.isl_map_subtract.restype = c_void_p
@@ -10450,6 +12443,8 @@ isl.isl_map_to_list.restype = c_void_p
 isl.isl_map_to_list.argtypes = [c_void_p]
 isl.isl_map_to_union_map.restype = c_void_p
 isl.isl_map_to_union_map.argtypes = [c_void_p]
+isl.isl_map_get_tuple_name.restype = POINTER(c_char)
+isl.isl_map_get_tuple_name.argtypes = [c_void_p, c_int]
 isl.isl_map_uncurry.restype = c_void_p
 isl.isl_map_uncurry.argtypes = [c_void_p]
 isl.isl_map_union.restype = c_void_p
@@ -10501,6 +12496,21 @@ class basic_map(map):
             return 'isl.basic_map("""%s""")' % s
         else:
             return 'isl.basic_map("%s")' % s
+    def add_constraint(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is constraint:
+                arg1 = constraint(arg1)
+        except:
+            return map(arg0).add_constraint(arg1)
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_add_constraint(isl.isl_basic_map_copy(arg0.ptr), isl.isl_constraint_copy(arg1.ptr))
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
     def affine_hull(arg0):
         try:
             if not arg0.__class__ is basic_map:
@@ -10541,6 +12551,18 @@ class basic_map(map):
         res = isl.isl_basic_map_apply_range(isl.isl_basic_map_copy(arg0.ptr), isl.isl_basic_map_copy(arg1.ptr))
         obj = basic_map(ctx=ctx, ptr=res)
         return obj
+    def constraint_list(arg0):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_get_constraint_list(arg0.ptr)
+        obj = constraint_list(ctx=ctx, ptr=res)
+        return obj
+    def get_constraint_list(arg0):
+        return arg0.constraint_list()
     def deltas(arg0):
         try:
             if not arg0.__class__ is basic_map:
@@ -10560,6 +12582,53 @@ class basic_map(map):
         ctx = arg0.ctx
         res = isl.isl_basic_map_detect_equalities(isl.isl_basic_map_copy(arg0.ptr))
         obj = basic_map(ctx=ctx, ptr=res)
+        return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
+    def dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_get_dim_name(arg0.ptr, arg1, arg2)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_dim_name(arg0, arg1, arg2):
+        return arg0.dim_name(arg1, arg2)
+    def div(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_get_div(arg0.ptr, arg1)
+        obj = aff(ctx=ctx, ptr=res)
+        return obj
+    def get_div(arg0, arg1):
+        return arg0.div(arg1)
+    def equalities_matrix(arg0, arg1, arg2, arg3, arg4, arg5):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_equalities_matrix(arg0.ptr, arg1, arg2, arg3, arg4, arg5)
+        obj = mat(ctx=ctx, ptr=res)
         return obj
     def flatten(arg0):
         try:
@@ -10591,6 +12660,40 @@ class basic_map(map):
         res = isl.isl_basic_map_flatten_range(isl.isl_basic_map_copy(arg0.ptr))
         obj = basic_map(ctx=ctx, ptr=res)
         return obj
+    def foreach_constraint(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = constraint(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_foreach_constraint(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    @staticmethod
+    def from_constraint(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_from_constraint(isl.isl_constraint_copy(arg0.ptr))
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
     def gist(arg0, arg1):
         try:
             if not arg0.__class__ is basic_map:
@@ -10605,6 +12708,27 @@ class basic_map(map):
         ctx = arg0.ctx
         res = isl.isl_basic_map_gist(isl.isl_basic_map_copy(arg0.ptr), isl.isl_basic_map_copy(arg1.ptr))
         obj = basic_map(ctx=ctx, ptr=res)
+        return obj
+    def has_dim_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_has_dim_id(arg0.ptr, arg1, arg2)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def inequalities_matrix(arg0, arg1, arg2, arg3, arg4, arg5):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_inequalities_matrix(arg0.ptr, arg1, arg2, arg3, arg4, arg5)
+        obj = mat(ctx=ctx, ptr=res)
         return obj
     def intersect(arg0, arg1):
         try:
@@ -10714,6 +12838,49 @@ class basic_map(map):
         res = isl.isl_basic_map_lexmin(isl.isl_basic_map_copy(arg0.ptr))
         obj = map(ctx=ctx, ptr=res)
         return obj
+    def local_space(arg0):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_get_local_space(arg0.ptr)
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def get_local_space(arg0):
+        return arg0.local_space()
+    def n_constraint(arg0):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_n_constraint(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
+    def project_out(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_project_out(isl.isl_basic_map_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
+    def remove_divs(arg0):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_remove_divs(isl.isl_basic_map_copy(arg0.ptr))
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
     def reverse(arg0):
         try:
             if not arg0.__class__ is basic_map:
@@ -10734,6 +12901,72 @@ class basic_map(map):
         res = isl.isl_basic_map_sample(isl.isl_basic_map_copy(arg0.ptr))
         obj = basic_map(ctx=ctx, ptr=res)
         return obj
+    def set_dim_name(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_set_dim_name(isl.isl_basic_map_copy(arg0.ptr), arg1, arg2, arg3.encode('ascii'))
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
+    def set_tuple_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is id:
+                arg2 = id(arg2)
+        except:
+            return map(arg0).set_tuple_id(arg1, arg2)
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_set_tuple_id(isl.isl_basic_map_copy(arg0.ptr), arg1, isl.isl_id_copy(arg2.ptr))
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
+    def set_tuple_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_set_tuple_name(isl.isl_basic_map_copy(arg0.ptr), arg1, arg2.encode('ascii'))
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
+    def to_list(arg0):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_to_list(isl.isl_basic_map_copy(arg0.ptr))
+        obj = basic_map_list(ctx=ctx, ptr=res)
+        return obj
+    @staticmethod
+    def total_dim(arg0):
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_total_dim(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
+    def tuple_name(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_map:
+                arg0 = basic_map(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_get_tuple_name(arg0.ptr, arg1)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_tuple_name(arg0, arg1):
+        return arg0.tuple_name(arg1)
     def union(arg0, arg1):
         try:
             if not arg0.__class__ is basic_map:
@@ -10749,27 +12982,55 @@ class basic_map(map):
         res = isl.isl_basic_map_union(isl.isl_basic_map_copy(arg0.ptr), isl.isl_basic_map_copy(arg1.ptr))
         obj = map(ctx=ctx, ptr=res)
         return obj
+    @staticmethod
+    def universe(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_universe(isl.isl_space_copy(arg0.ptr))
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
 
 isl.isl_basic_map_read_from_str.restype = c_void_p
 isl.isl_basic_map_read_from_str.argtypes = [Context, c_char_p]
+isl.isl_basic_map_add_constraint.restype = c_void_p
+isl.isl_basic_map_add_constraint.argtypes = [c_void_p, c_void_p]
 isl.isl_basic_map_affine_hull.restype = c_void_p
 isl.isl_basic_map_affine_hull.argtypes = [c_void_p]
 isl.isl_basic_map_apply_domain.restype = c_void_p
 isl.isl_basic_map_apply_domain.argtypes = [c_void_p, c_void_p]
 isl.isl_basic_map_apply_range.restype = c_void_p
 isl.isl_basic_map_apply_range.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_map_get_constraint_list.restype = c_void_p
+isl.isl_basic_map_get_constraint_list.argtypes = [c_void_p]
 isl.isl_basic_map_deltas.restype = c_void_p
 isl.isl_basic_map_deltas.argtypes = [c_void_p]
 isl.isl_basic_map_detect_equalities.restype = c_void_p
 isl.isl_basic_map_detect_equalities.argtypes = [c_void_p]
+isl.isl_basic_map_dim.argtypes = [c_void_p, c_int]
+isl.isl_basic_map_get_dim_name.restype = POINTER(c_char)
+isl.isl_basic_map_get_dim_name.argtypes = [c_void_p, c_int, c_int]
+isl.isl_basic_map_get_div.restype = c_void_p
+isl.isl_basic_map_get_div.argtypes = [c_void_p, c_int]
+isl.isl_basic_map_equalities_matrix.restype = c_void_p
+isl.isl_basic_map_equalities_matrix.argtypes = [c_void_p, c_int, c_int, c_int, c_int, c_int]
 isl.isl_basic_map_flatten.restype = c_void_p
 isl.isl_basic_map_flatten.argtypes = [c_void_p]
 isl.isl_basic_map_flatten_domain.restype = c_void_p
 isl.isl_basic_map_flatten_domain.argtypes = [c_void_p]
 isl.isl_basic_map_flatten_range.restype = c_void_p
 isl.isl_basic_map_flatten_range.argtypes = [c_void_p]
+isl.isl_basic_map_foreach_constraint.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_basic_map_from_constraint.restype = c_void_p
+isl.isl_basic_map_from_constraint.argtypes = [c_void_p]
 isl.isl_basic_map_gist.restype = c_void_p
 isl.isl_basic_map_gist.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_map_has_dim_id.argtypes = [c_void_p, c_int, c_int]
+isl.isl_basic_map_inequalities_matrix.restype = c_void_p
+isl.isl_basic_map_inequalities_matrix.argtypes = [c_void_p, c_int, c_int, c_int, c_int, c_int]
 isl.isl_basic_map_intersect.restype = c_void_p
 isl.isl_basic_map_intersect.argtypes = [c_void_p, c_void_p]
 isl.isl_basic_map_intersect_domain.restype = c_void_p
@@ -10783,18 +13044,262 @@ isl.isl_basic_map_lexmax.restype = c_void_p
 isl.isl_basic_map_lexmax.argtypes = [c_void_p]
 isl.isl_basic_map_lexmin.restype = c_void_p
 isl.isl_basic_map_lexmin.argtypes = [c_void_p]
+isl.isl_basic_map_get_local_space.restype = c_void_p
+isl.isl_basic_map_get_local_space.argtypes = [c_void_p]
+isl.isl_basic_map_n_constraint.argtypes = [c_void_p]
+isl.isl_basic_map_project_out.restype = c_void_p
+isl.isl_basic_map_project_out.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_basic_map_remove_divs.restype = c_void_p
+isl.isl_basic_map_remove_divs.argtypes = [c_void_p]
 isl.isl_basic_map_reverse.restype = c_void_p
 isl.isl_basic_map_reverse.argtypes = [c_void_p]
 isl.isl_basic_map_sample.restype = c_void_p
 isl.isl_basic_map_sample.argtypes = [c_void_p]
+isl.isl_basic_map_set_dim_name.restype = c_void_p
+isl.isl_basic_map_set_dim_name.argtypes = [c_void_p, c_int, c_int, c_char_p]
+isl.isl_basic_map_set_tuple_id.restype = c_void_p
+isl.isl_basic_map_set_tuple_id.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_basic_map_set_tuple_name.restype = c_void_p
+isl.isl_basic_map_set_tuple_name.argtypes = [c_void_p, c_int, c_char_p]
+isl.isl_basic_map_to_list.restype = c_void_p
+isl.isl_basic_map_to_list.argtypes = [c_void_p]
+isl.isl_basic_map_total_dim.argtypes = [c_int]
+isl.isl_basic_map_get_tuple_name.restype = POINTER(c_char)
+isl.isl_basic_map_get_tuple_name.argtypes = [c_void_p, c_int]
 isl.isl_basic_map_union.restype = c_void_p
 isl.isl_basic_map_union.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_map_universe.restype = c_void_p
+isl.isl_basic_map_universe.argtypes = [c_void_p]
 isl.isl_basic_map_copy.restype = c_void_p
 isl.isl_basic_map_copy.argtypes = [c_void_p]
 isl.isl_basic_map_free.restype = c_void_p
 isl.isl_basic_map_free.argtypes = [c_void_p]
 isl.isl_basic_map_to_str.restype = POINTER(c_char)
 isl.isl_basic_map_to_str.argtypes = [c_void_p]
+
+class basic_map_list(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        if len(args) == 1 and type(args[0]) == int:
+            self.ctx = Context.getDefaultInstance()
+            self.ptr = isl.isl_basic_map_list_alloc(self.ctx, args[0])
+            return
+        if len(args) == 1 and args[0].__class__ is basic_map:
+            self.ctx = Context.getDefaultInstance()
+            self.ptr = isl.isl_basic_map_list_from_basic_map(isl.isl_basic_map_copy(args[0].ptr))
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_basic_map_list_free(self.ptr)
+    def __str__(arg0):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        ptr = isl.isl_basic_map_list_to_str(arg0.ptr)
+        res = cast(ptr, c_char_p).value.decode('ascii')
+        libc.free(ptr)
+        return res
+    def __repr__(self):
+        s = str(self)
+        if '"' in s:
+            return 'isl.basic_map_list("""%s""")' % s
+        else:
+            return 'isl.basic_map_list("%s")' % s
+    def add(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is basic_map:
+                arg1 = basic_map(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_add(isl.isl_basic_map_list_copy(arg0.ptr), isl.isl_basic_map_copy(arg1.ptr))
+        obj = basic_map_list(ctx=ctx, ptr=res)
+        return obj
+    def at(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_get_at(arg0.ptr, arg1)
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
+    def get_at(arg0, arg1):
+        return arg0.at(arg1)
+    def clear(arg0):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_clear(isl.isl_basic_map_list_copy(arg0.ptr))
+        obj = basic_map_list(ctx=ctx, ptr=res)
+        return obj
+    def concat(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is basic_map_list:
+                arg1 = basic_map_list(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_concat(isl.isl_basic_map_list_copy(arg0.ptr), isl.isl_basic_map_list_copy(arg1.ptr))
+        obj = basic_map_list(ctx=ctx, ptr=res)
+        return obj
+    def drop(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_drop(isl.isl_basic_map_list_copy(arg0.ptr), arg1, arg2)
+        obj = basic_map_list(ctx=ctx, ptr=res)
+        return obj
+    def foreach(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = basic_map(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_foreach(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def foreach_scc(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = basic_map(ctx=arg0.ctx, ptr=isl.isl_basic_map_copy(cb_arg0))
+            cb_arg1 = basic_map(ctx=arg0.ctx, ptr=isl.isl_basic_map_copy(cb_arg1))
+            try:
+                res = arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 1 if res else 0
+        cb1 = fn(cb_func)
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = basic_map_list(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg2(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb2 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_foreach_scc(arg0.ptr, cb1, None, cb2, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def insert(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is basic_map:
+                arg2 = basic_map(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_insert(isl.isl_basic_map_list_copy(arg0.ptr), arg1, isl.isl_basic_map_copy(arg2.ptr))
+        obj = basic_map_list(ctx=ctx, ptr=res)
+        return obj
+    def set_at(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is basic_map:
+                arg2 = basic_map(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_set_at(isl.isl_basic_map_list_copy(arg0.ptr), arg1, isl.isl_basic_map_copy(arg2.ptr))
+        obj = basic_map_list(ctx=ctx, ptr=res)
+        return obj
+    def size(arg0):
+        try:
+            if not arg0.__class__ is basic_map_list:
+                arg0 = basic_map_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_map_list_size(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
+
+isl.isl_basic_map_list_alloc.restype = c_void_p
+isl.isl_basic_map_list_alloc.argtypes = [Context, c_int]
+isl.isl_basic_map_list_from_basic_map.restype = c_void_p
+isl.isl_basic_map_list_from_basic_map.argtypes = [c_void_p]
+isl.isl_basic_map_list_add.restype = c_void_p
+isl.isl_basic_map_list_add.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_map_list_get_at.restype = c_void_p
+isl.isl_basic_map_list_get_at.argtypes = [c_void_p, c_int]
+isl.isl_basic_map_list_clear.restype = c_void_p
+isl.isl_basic_map_list_clear.argtypes = [c_void_p]
+isl.isl_basic_map_list_concat.restype = c_void_p
+isl.isl_basic_map_list_concat.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_map_list_drop.restype = c_void_p
+isl.isl_basic_map_list_drop.argtypes = [c_void_p, c_int, c_int]
+isl.isl_basic_map_list_foreach.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_basic_map_list_foreach_scc.argtypes = [c_void_p, c_void_p, c_void_p, c_void_p, c_void_p]
+isl.isl_basic_map_list_insert.restype = c_void_p
+isl.isl_basic_map_list_insert.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_basic_map_list_set_at.restype = c_void_p
+isl.isl_basic_map_list_set_at.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_basic_map_list_size.argtypes = [c_void_p]
+isl.isl_basic_map_list_copy.restype = c_void_p
+isl.isl_basic_map_list_copy.argtypes = [c_void_p]
+isl.isl_basic_map_list_free.restype = c_void_p
+isl.isl_basic_map_list_free.argtypes = [c_void_p]
+isl.isl_basic_map_list_to_str.restype = POINTER(c_char)
+isl.isl_basic_map_list_to_str.argtypes = [c_void_p]
 
 class union_set(object):
     def __init__(self, *args, **keywords):
@@ -11464,6 +13969,21 @@ class set(union_set):
             return 'isl.set("""%s""")' % s
         else:
             return 'isl.set("%s")' % s
+    def add_constraint(arg0, arg1):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is constraint:
+                arg1 = constraint(arg1)
+        except:
+            return union_set(arg0).add_constraint(arg1)
+        ctx = arg0.ctx
+        res = isl.isl_set_add_constraint(isl.isl_set_copy(arg0.ptr), isl.isl_constraint_copy(arg1.ptr))
+        obj = set(ctx=ctx, ptr=res)
+        return obj
     def affine_hull(arg0):
         try:
             if not arg0.__class__ is set:
@@ -11499,6 +14019,18 @@ class set(union_set):
         res = isl.isl_set_as_pw_multi_aff(isl.isl_set_copy(arg0.ptr))
         obj = pw_multi_aff(ctx=ctx, ptr=res)
         return obj
+    def basic_set_list(arg0):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_get_basic_set_list(arg0.ptr)
+        obj = basic_set_list(ctx=ctx, ptr=res)
+        return obj
+    def get_basic_set_list(arg0):
+        return arg0.basic_set_list()
     def bind(arg0, arg1):
         try:
             if not arg0.__class__ is set:
@@ -11524,6 +14056,16 @@ class set(union_set):
         res = isl.isl_set_coalesce(isl.isl_set_copy(arg0.ptr))
         obj = set(ctx=ctx, ptr=res)
         return obj
+    def coefficients(arg0):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_coefficients(isl.isl_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
     def complement(arg0):
         try:
             if not arg0.__class__ is set:
@@ -11533,6 +14075,16 @@ class set(union_set):
         ctx = arg0.ctx
         res = isl.isl_set_complement(isl.isl_set_copy(arg0.ptr))
         obj = set(ctx=ctx, ptr=res)
+        return obj
+    def convex_hull(arg0):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_convex_hull(isl.isl_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
         return obj
     def detect_equalities(arg0):
         try:
@@ -11544,6 +14096,16 @@ class set(union_set):
         res = isl.isl_set_detect_equalities(isl.isl_set_copy(arg0.ptr))
         obj = set(ctx=ctx, ptr=res)
         return obj
+    def dim_max(arg0, arg1):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_dim_max(isl.isl_set_copy(arg0.ptr), arg1)
+        obj = pw_aff(ctx=ctx, ptr=res)
+        return obj
     def dim_max_val(arg0, arg1):
         try:
             if not arg0.__class__ is set:
@@ -11553,6 +14115,16 @@ class set(union_set):
         ctx = arg0.ctx
         res = isl.isl_set_dim_max_val(isl.isl_set_copy(arg0.ptr), arg1)
         obj = val(ctx=ctx, ptr=res)
+        return obj
+    def dim_min(arg0, arg1):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_dim_min(isl.isl_set_copy(arg0.ptr), arg1)
+        obj = pw_aff(ctx=ctx, ptr=res)
         return obj
     def dim_min_val(arg0, arg1):
         try:
@@ -11583,6 +14155,16 @@ class set(union_set):
             raise
         ctx = arg0.ctx
         res = isl.isl_set_empty(isl.isl_space_copy(arg0.ptr))
+        obj = set(ctx=ctx, ptr=res)
+        return obj
+    def fix_si(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_fix_si(isl.isl_set_copy(arg0.ptr), arg1, arg2, arg3)
         obj = set(ctx=ctx, ptr=res)
         return obj
     def flatten(arg0):
@@ -11641,6 +14223,17 @@ class set(union_set):
             raise exc_info[0]
         if res < 0:
             raise Error
+    @staticmethod
+    def from_pw_aff(arg0):
+        try:
+            if not arg0.__class__ is pw_aff:
+                arg0 = pw_aff(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_from_pw_aff(isl.isl_pw_aff_copy(arg0.ptr))
+        obj = set(ctx=ctx, ptr=res)
+        return obj
     def gist(arg0, arg1):
         try:
             if not arg0.__class__ is set:
@@ -11744,6 +14337,17 @@ class set(union_set):
             raise
         ctx = arg0.ctx
         res = isl.isl_set_involves_locals(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_bounded(arg0):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_is_bounded(arg0.ptr)
         if res < 0:
             raise Error
         return bool(res)
@@ -11920,6 +14524,31 @@ class set(union_set):
             obj = set(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def lower_bound_si(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_lower_bound_si(isl.isl_set_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = set(ctx=ctx, ptr=res)
+        return obj
+    def lower_bound_val(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        try:
+            if not arg3.__class__ is val:
+                arg3 = val(arg3)
+        except:
+            return union_set(arg0).lower_bound_val(arg1, arg2, arg3)
+        ctx = arg0.ctx
+        res = isl.isl_set_lower_bound_val(isl.isl_set_copy(arg0.ptr), arg1, arg2, isl.isl_val_copy(arg3.ptr))
+        obj = set(ctx=ctx, ptr=res)
+        return obj
     def max_multi_pw_aff(arg0):
         try:
             if not arg0.__class__ is set:
@@ -12151,6 +14780,16 @@ class set(union_set):
             obj = pw_multi_aff(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def remove_divs(arg0):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_remove_divs(isl.isl_set_copy(arg0.ptr))
+        obj = set(ctx=ctx, ptr=res)
+        return obj
     def sample(arg0):
         try:
             if not arg0.__class__ is set:
@@ -12183,6 +14822,16 @@ class set(union_set):
         return obj
     def get_simple_fixed_box_hull(arg0):
         return arg0.simple_fixed_box_hull()
+    def solutions(arg0):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_solutions(isl.isl_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
     def space(arg0):
         try:
             if not arg0.__class__ is set:
@@ -12263,6 +14912,18 @@ class set(union_set):
         if res < 0:
             raise Error
         return int(res)
+    def tuple_id(arg0):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_get_tuple_id(arg0.ptr)
+        obj = id(ctx=ctx, ptr=res)
+        return obj
+    def get_tuple_id(arg0):
+        return arg0.tuple_id()
     def unbind_params(arg0, arg1):
         try:
             if not arg0.__class__ is set:
@@ -12363,6 +15024,31 @@ class set(union_set):
             obj = set(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def upper_bound_si(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_set_upper_bound_si(isl.isl_set_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = set(ctx=ctx, ptr=res)
+        return obj
+    def upper_bound_val(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is set:
+                arg0 = set(arg0)
+        except:
+            raise
+        try:
+            if not arg3.__class__ is val:
+                arg3 = val(arg3)
+        except:
+            return union_set(arg0).upper_bound_val(arg1, arg2, arg3)
+        ctx = arg0.ctx
+        res = isl.isl_set_upper_bound_val(isl.isl_set_copy(arg0.ptr), arg1, arg2, isl.isl_val_copy(arg3.ptr))
+        obj = set(ctx=ctx, ptr=res)
+        return obj
     def wrapped_reverse(arg0):
         try:
             if not arg0.__class__ is set:
@@ -12380,32 +15066,48 @@ isl.isl_set_from_point.restype = c_void_p
 isl.isl_set_from_point.argtypes = [c_void_p]
 isl.isl_set_read_from_str.restype = c_void_p
 isl.isl_set_read_from_str.argtypes = [Context, c_char_p]
+isl.isl_set_add_constraint.restype = c_void_p
+isl.isl_set_add_constraint.argtypes = [c_void_p, c_void_p]
 isl.isl_set_affine_hull.restype = c_void_p
 isl.isl_set_affine_hull.argtypes = [c_void_p]
 isl.isl_set_apply.restype = c_void_p
 isl.isl_set_apply.argtypes = [c_void_p, c_void_p]
 isl.isl_set_as_pw_multi_aff.restype = c_void_p
 isl.isl_set_as_pw_multi_aff.argtypes = [c_void_p]
+isl.isl_set_get_basic_set_list.restype = c_void_p
+isl.isl_set_get_basic_set_list.argtypes = [c_void_p]
 isl.isl_set_bind.restype = c_void_p
 isl.isl_set_bind.argtypes = [c_void_p, c_void_p]
 isl.isl_set_coalesce.restype = c_void_p
 isl.isl_set_coalesce.argtypes = [c_void_p]
+isl.isl_set_coefficients.restype = c_void_p
+isl.isl_set_coefficients.argtypes = [c_void_p]
 isl.isl_set_complement.restype = c_void_p
 isl.isl_set_complement.argtypes = [c_void_p]
+isl.isl_set_convex_hull.restype = c_void_p
+isl.isl_set_convex_hull.argtypes = [c_void_p]
 isl.isl_set_detect_equalities.restype = c_void_p
 isl.isl_set_detect_equalities.argtypes = [c_void_p]
+isl.isl_set_dim_max.restype = c_void_p
+isl.isl_set_dim_max.argtypes = [c_void_p, c_int]
 isl.isl_set_dim_max_val.restype = c_void_p
 isl.isl_set_dim_max_val.argtypes = [c_void_p, c_int]
+isl.isl_set_dim_min.restype = c_void_p
+isl.isl_set_dim_min.argtypes = [c_void_p, c_int]
 isl.isl_set_dim_min_val.restype = c_void_p
 isl.isl_set_dim_min_val.argtypes = [c_void_p, c_int]
 isl.isl_set_drop_unused_params.restype = c_void_p
 isl.isl_set_drop_unused_params.argtypes = [c_void_p]
 isl.isl_set_empty.restype = c_void_p
 isl.isl_set_empty.argtypes = [c_void_p]
+isl.isl_set_fix_si.restype = c_void_p
+isl.isl_set_fix_si.argtypes = [c_void_p, c_int, c_int, c_int]
 isl.isl_set_flatten.restype = c_void_p
 isl.isl_set_flatten.argtypes = [c_void_p]
 isl.isl_set_foreach_basic_set.argtypes = [c_void_p, c_void_p, c_void_p]
 isl.isl_set_foreach_point.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_set_from_pw_aff.restype = c_void_p
+isl.isl_set_from_pw_aff.argtypes = [c_void_p]
 isl.isl_set_gist.restype = c_void_p
 isl.isl_set_gist.argtypes = [c_void_p, c_void_p]
 isl.isl_set_gist_params.restype = c_void_p
@@ -12421,6 +15123,7 @@ isl.isl_set_intersect.argtypes = [c_void_p, c_void_p]
 isl.isl_set_intersect_params.restype = c_void_p
 isl.isl_set_intersect_params.argtypes = [c_void_p, c_void_p]
 isl.isl_set_involves_locals.argtypes = [c_void_p]
+isl.isl_set_is_bounded.argtypes = [c_void_p]
 isl.isl_set_is_disjoint.argtypes = [c_void_p, c_void_p]
 isl.isl_set_is_empty.argtypes = [c_void_p]
 isl.isl_set_is_equal.argtypes = [c_void_p, c_void_p]
@@ -12442,6 +15145,10 @@ isl.isl_set_lower_bound_multi_pw_aff.restype = c_void_p
 isl.isl_set_lower_bound_multi_pw_aff.argtypes = [c_void_p, c_void_p]
 isl.isl_set_lower_bound_multi_val.restype = c_void_p
 isl.isl_set_lower_bound_multi_val.argtypes = [c_void_p, c_void_p]
+isl.isl_set_lower_bound_si.restype = c_void_p
+isl.isl_set_lower_bound_si.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_set_lower_bound_val.restype = c_void_p
+isl.isl_set_lower_bound_val.argtypes = [c_void_p, c_int, c_int, c_void_p]
 isl.isl_set_max_multi_pw_aff.restype = c_void_p
 isl.isl_set_max_multi_pw_aff.argtypes = [c_void_p]
 isl.isl_set_max_val.restype = c_void_p
@@ -12477,12 +15184,16 @@ isl.isl_set_pw_aff_on_domain_val.restype = c_void_p
 isl.isl_set_pw_aff_on_domain_val.argtypes = [c_void_p, c_void_p]
 isl.isl_set_pw_multi_aff_on_domain_multi_val.restype = c_void_p
 isl.isl_set_pw_multi_aff_on_domain_multi_val.argtypes = [c_void_p, c_void_p]
+isl.isl_set_remove_divs.restype = c_void_p
+isl.isl_set_remove_divs.argtypes = [c_void_p]
 isl.isl_set_sample.restype = c_void_p
 isl.isl_set_sample.argtypes = [c_void_p]
 isl.isl_set_sample_point.restype = c_void_p
 isl.isl_set_sample_point.argtypes = [c_void_p]
 isl.isl_set_get_simple_fixed_box_hull.restype = c_void_p
 isl.isl_set_get_simple_fixed_box_hull.argtypes = [c_void_p]
+isl.isl_set_solutions.restype = c_void_p
+isl.isl_set_solutions.argtypes = [c_void_p]
 isl.isl_set_get_space.restype = c_void_p
 isl.isl_set_get_space.argtypes = [c_void_p]
 isl.isl_set_get_stride.restype = c_void_p
@@ -12496,6 +15207,8 @@ isl.isl_set_to_union_set.argtypes = [c_void_p]
 isl.isl_set_translation.restype = c_void_p
 isl.isl_set_translation.argtypes = [c_void_p]
 isl.isl_set_tuple_dim.argtypes = [c_void_p]
+isl.isl_set_get_tuple_id.restype = c_void_p
+isl.isl_set_get_tuple_id.argtypes = [c_void_p]
 isl.isl_set_unbind_params.restype = c_void_p
 isl.isl_set_unbind_params.argtypes = [c_void_p, c_void_p]
 isl.isl_set_unbind_params_insert_domain.restype = c_void_p
@@ -12512,6 +15225,10 @@ isl.isl_set_upper_bound_multi_pw_aff.restype = c_void_p
 isl.isl_set_upper_bound_multi_pw_aff.argtypes = [c_void_p, c_void_p]
 isl.isl_set_upper_bound_multi_val.restype = c_void_p
 isl.isl_set_upper_bound_multi_val.argtypes = [c_void_p, c_void_p]
+isl.isl_set_upper_bound_si.restype = c_void_p
+isl.isl_set_upper_bound_si.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_set_upper_bound_val.restype = c_void_p
+isl.isl_set_upper_bound_val.argtypes = [c_void_p, c_int, c_int, c_void_p]
 isl.isl_set_wrapped_reverse.restype = c_void_p
 isl.isl_set_wrapped_reverse.argtypes = [c_void_p]
 isl.isl_set_copy.restype = c_void_p
@@ -12555,6 +15272,21 @@ class basic_set(set):
             return 'isl.basic_set("""%s""")' % s
         else:
             return 'isl.basic_set("%s")' % s
+    def add_constraint(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is constraint:
+                arg1 = constraint(arg1)
+        except:
+            return set(arg0).add_constraint(arg1)
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_add_constraint(isl.isl_basic_set_copy(arg0.ptr), isl.isl_constraint_copy(arg1.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
     def affine_hull(arg0):
         try:
             if not arg0.__class__ is basic_set:
@@ -12580,6 +15312,38 @@ class basic_set(set):
         res = isl.isl_basic_set_apply(isl.isl_basic_set_copy(arg0.ptr), isl.isl_basic_map_copy(arg1.ptr))
         obj = basic_set(ctx=ctx, ptr=res)
         return obj
+    def coefficients(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_coefficients(isl.isl_basic_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
+    def compute_vertices(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_compute_vertices(arg0.ptr)
+        obj = vertices(ctx=ctx, ptr=res)
+        return obj
+    def constraint_list(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_get_constraint_list(arg0.ptr)
+        obj = constraint_list(ctx=ctx, ptr=res)
+        return obj
+    def get_constraint_list(arg0):
+        return arg0.constraint_list()
     def detect_equalities(arg0):
         try:
             if not arg0.__class__ is basic_set:
@@ -12590,6 +15354,17 @@ class basic_set(set):
         res = isl.isl_basic_set_detect_equalities(isl.isl_basic_set_copy(arg0.ptr))
         obj = basic_set(ctx=ctx, ptr=res)
         return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
     def dim_max_val(arg0, arg1):
         try:
             if not arg0.__class__ is basic_set:
@@ -12600,6 +15375,30 @@ class basic_set(set):
         res = isl.isl_basic_set_dim_max_val(isl.isl_basic_set_copy(arg0.ptr), arg1)
         obj = val(ctx=ctx, ptr=res)
         return obj
+    def dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_get_dim_name(arg0.ptr, arg1, arg2)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_dim_name(arg0, arg1, arg2):
+        return arg0.dim_name(arg1, arg2)
+    def equalities_matrix(arg0, arg1, arg2, arg3, arg4):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_equalities_matrix(arg0.ptr, arg1, arg2, arg3, arg4)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
     def flatten(arg0):
         try:
             if not arg0.__class__ is basic_set:
@@ -12608,6 +15407,40 @@ class basic_set(set):
             raise
         ctx = arg0.ctx
         res = isl.isl_basic_set_flatten(isl.isl_basic_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
+    def foreach_constraint(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = constraint(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_foreach_constraint(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    @staticmethod
+    def from_constraint(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_from_constraint(isl.isl_constraint_copy(arg0.ptr))
         obj = basic_set(ctx=ctx, ptr=res)
         return obj
     def gist(arg0, arg1):
@@ -12624,6 +15457,16 @@ class basic_set(set):
         ctx = arg0.ctx
         res = isl.isl_basic_set_gist(isl.isl_basic_set_copy(arg0.ptr), isl.isl_basic_set_copy(arg1.ptr))
         obj = basic_set(ctx=ctx, ptr=res)
+        return obj
+    def inequalities_matrix(arg0, arg1, arg2, arg3, arg4):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_inequalities_matrix(arg0.ptr, arg1, arg2, arg3, arg4)
+        obj = mat(ctx=ctx, ptr=res)
         return obj
     def intersect(arg0, arg1):
         try:
@@ -12655,6 +15498,17 @@ class basic_set(set):
         res = isl.isl_basic_set_intersect_params(isl.isl_basic_set_copy(arg0.ptr), isl.isl_basic_set_copy(arg1.ptr))
         obj = basic_set(ctx=ctx, ptr=res)
         return obj
+    def is_bounded(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_is_bounded(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
     def is_empty(arg0):
         try:
             if not arg0.__class__ is basic_set:
@@ -12729,6 +15583,17 @@ class basic_set(set):
         res = isl.isl_basic_set_lexmin(isl.isl_basic_set_copy(arg0.ptr))
         obj = set(ctx=ctx, ptr=res)
         return obj
+    def n_constraint(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_n_constraint(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
     def params(arg0):
         try:
             if not arg0.__class__ is basic_set:
@@ -12737,6 +15602,16 @@ class basic_set(set):
             raise
         ctx = arg0.ctx
         res = isl.isl_basic_set_params(isl.isl_basic_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
+    def remove_divs(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_remove_divs(isl.isl_basic_set_copy(arg0.ptr))
         obj = basic_set(ctx=ctx, ptr=res)
         return obj
     def sample(arg0):
@@ -12758,6 +15633,26 @@ class basic_set(set):
         ctx = arg0.ctx
         res = isl.isl_basic_set_sample_point(isl.isl_basic_set_copy(arg0.ptr))
         obj = point(ctx=ctx, ptr=res)
+        return obj
+    def solutions(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_solutions(isl.isl_basic_set_copy(arg0.ptr))
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
+    def to_list(arg0):
+        try:
+            if not arg0.__class__ is basic_set:
+                arg0 = basic_set(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_to_list(isl.isl_basic_set_copy(arg0.ptr))
+        obj = basic_set_list(ctx=ctx, ptr=res)
         return obj
     def to_set(arg0):
         try:
@@ -12789,22 +15684,41 @@ isl.isl_basic_set_from_point.restype = c_void_p
 isl.isl_basic_set_from_point.argtypes = [c_void_p]
 isl.isl_basic_set_read_from_str.restype = c_void_p
 isl.isl_basic_set_read_from_str.argtypes = [Context, c_char_p]
+isl.isl_basic_set_add_constraint.restype = c_void_p
+isl.isl_basic_set_add_constraint.argtypes = [c_void_p, c_void_p]
 isl.isl_basic_set_affine_hull.restype = c_void_p
 isl.isl_basic_set_affine_hull.argtypes = [c_void_p]
 isl.isl_basic_set_apply.restype = c_void_p
 isl.isl_basic_set_apply.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_set_coefficients.restype = c_void_p
+isl.isl_basic_set_coefficients.argtypes = [c_void_p]
+isl.isl_basic_set_compute_vertices.restype = c_void_p
+isl.isl_basic_set_compute_vertices.argtypes = [c_void_p]
+isl.isl_basic_set_get_constraint_list.restype = c_void_p
+isl.isl_basic_set_get_constraint_list.argtypes = [c_void_p]
 isl.isl_basic_set_detect_equalities.restype = c_void_p
 isl.isl_basic_set_detect_equalities.argtypes = [c_void_p]
+isl.isl_basic_set_dim.argtypes = [c_void_p, c_int]
 isl.isl_basic_set_dim_max_val.restype = c_void_p
 isl.isl_basic_set_dim_max_val.argtypes = [c_void_p, c_int]
+isl.isl_basic_set_get_dim_name.restype = POINTER(c_char)
+isl.isl_basic_set_get_dim_name.argtypes = [c_void_p, c_int, c_int]
+isl.isl_basic_set_equalities_matrix.restype = c_void_p
+isl.isl_basic_set_equalities_matrix.argtypes = [c_void_p, c_int, c_int, c_int, c_int]
 isl.isl_basic_set_flatten.restype = c_void_p
 isl.isl_basic_set_flatten.argtypes = [c_void_p]
+isl.isl_basic_set_foreach_constraint.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_basic_set_from_constraint.restype = c_void_p
+isl.isl_basic_set_from_constraint.argtypes = [c_void_p]
 isl.isl_basic_set_gist.restype = c_void_p
 isl.isl_basic_set_gist.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_set_inequalities_matrix.restype = c_void_p
+isl.isl_basic_set_inequalities_matrix.argtypes = [c_void_p, c_int, c_int, c_int, c_int]
 isl.isl_basic_set_intersect.restype = c_void_p
 isl.isl_basic_set_intersect.argtypes = [c_void_p, c_void_p]
 isl.isl_basic_set_intersect_params.restype = c_void_p
 isl.isl_basic_set_intersect_params.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_set_is_bounded.argtypes = [c_void_p]
 isl.isl_basic_set_is_empty.argtypes = [c_void_p]
 isl.isl_basic_set_is_equal.argtypes = [c_void_p, c_void_p]
 isl.isl_basic_set_is_subset.argtypes = [c_void_p, c_void_p]
@@ -12813,12 +15727,19 @@ isl.isl_basic_set_lexmax.restype = c_void_p
 isl.isl_basic_set_lexmax.argtypes = [c_void_p]
 isl.isl_basic_set_lexmin.restype = c_void_p
 isl.isl_basic_set_lexmin.argtypes = [c_void_p]
+isl.isl_basic_set_n_constraint.argtypes = [c_void_p]
 isl.isl_basic_set_params.restype = c_void_p
 isl.isl_basic_set_params.argtypes = [c_void_p]
+isl.isl_basic_set_remove_divs.restype = c_void_p
+isl.isl_basic_set_remove_divs.argtypes = [c_void_p]
 isl.isl_basic_set_sample.restype = c_void_p
 isl.isl_basic_set_sample.argtypes = [c_void_p]
 isl.isl_basic_set_sample_point.restype = c_void_p
 isl.isl_basic_set_sample_point.argtypes = [c_void_p]
+isl.isl_basic_set_solutions.restype = c_void_p
+isl.isl_basic_set_solutions.argtypes = [c_void_p]
+isl.isl_basic_set_to_list.restype = c_void_p
+isl.isl_basic_set_to_list.argtypes = [c_void_p]
 isl.isl_basic_set_to_set.restype = c_void_p
 isl.isl_basic_set_to_set.argtypes = [c_void_p]
 isl.isl_basic_set_union.restype = c_void_p
@@ -12829,6 +15750,791 @@ isl.isl_basic_set_free.restype = c_void_p
 isl.isl_basic_set_free.argtypes = [c_void_p]
 isl.isl_basic_set_to_str.restype = POINTER(c_char)
 isl.isl_basic_set_to_str.argtypes = [c_void_p]
+
+class basic_set_list(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        if len(args) == 1 and type(args[0]) == int:
+            self.ctx = Context.getDefaultInstance()
+            self.ptr = isl.isl_basic_set_list_alloc(self.ctx, args[0])
+            return
+        if len(args) == 1 and args[0].__class__ is basic_set:
+            self.ctx = Context.getDefaultInstance()
+            self.ptr = isl.isl_basic_set_list_from_basic_set(isl.isl_basic_set_copy(args[0].ptr))
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_basic_set_list_free(self.ptr)
+    def __str__(arg0):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        ptr = isl.isl_basic_set_list_to_str(arg0.ptr)
+        res = cast(ptr, c_char_p).value.decode('ascii')
+        libc.free(ptr)
+        return res
+    def __repr__(self):
+        s = str(self)
+        if '"' in s:
+            return 'isl.basic_set_list("""%s""")' % s
+        else:
+            return 'isl.basic_set_list("%s")' % s
+    def add(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is basic_set:
+                arg1 = basic_set(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_add(isl.isl_basic_set_list_copy(arg0.ptr), isl.isl_basic_set_copy(arg1.ptr))
+        obj = basic_set_list(ctx=ctx, ptr=res)
+        return obj
+    def at(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_get_at(arg0.ptr, arg1)
+        obj = basic_set(ctx=ctx, ptr=res)
+        return obj
+    def get_at(arg0, arg1):
+        return arg0.at(arg1)
+    def clear(arg0):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_clear(isl.isl_basic_set_list_copy(arg0.ptr))
+        obj = basic_set_list(ctx=ctx, ptr=res)
+        return obj
+    def coefficients(arg0):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_coefficients(isl.isl_basic_set_list_copy(arg0.ptr))
+        obj = basic_set_list(ctx=ctx, ptr=res)
+        return obj
+    def concat(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is basic_set_list:
+                arg1 = basic_set_list(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_concat(isl.isl_basic_set_list_copy(arg0.ptr), isl.isl_basic_set_list_copy(arg1.ptr))
+        obj = basic_set_list(ctx=ctx, ptr=res)
+        return obj
+    def drop(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_drop(isl.isl_basic_set_list_copy(arg0.ptr), arg1, arg2)
+        obj = basic_set_list(ctx=ctx, ptr=res)
+        return obj
+    def foreach(arg0, arg1):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = basic_set(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_foreach(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def foreach_scc(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = basic_set(ctx=arg0.ctx, ptr=isl.isl_basic_set_copy(cb_arg0))
+            cb_arg1 = basic_set(ctx=arg0.ctx, ptr=isl.isl_basic_set_copy(cb_arg1))
+            try:
+                res = arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 1 if res else 0
+        cb1 = fn(cb_func)
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = basic_set_list(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg2(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb2 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_foreach_scc(arg0.ptr, cb1, None, cb2, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def insert(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is basic_set:
+                arg2 = basic_set(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_insert(isl.isl_basic_set_list_copy(arg0.ptr), arg1, isl.isl_basic_set_copy(arg2.ptr))
+        obj = basic_set_list(ctx=ctx, ptr=res)
+        return obj
+    def set_at(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is basic_set:
+                arg2 = basic_set(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_set_at(isl.isl_basic_set_list_copy(arg0.ptr), arg1, isl.isl_basic_set_copy(arg2.ptr))
+        obj = basic_set_list(ctx=ctx, ptr=res)
+        return obj
+    def size(arg0):
+        try:
+            if not arg0.__class__ is basic_set_list:
+                arg0 = basic_set_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_basic_set_list_size(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
+
+isl.isl_basic_set_list_alloc.restype = c_void_p
+isl.isl_basic_set_list_alloc.argtypes = [Context, c_int]
+isl.isl_basic_set_list_from_basic_set.restype = c_void_p
+isl.isl_basic_set_list_from_basic_set.argtypes = [c_void_p]
+isl.isl_basic_set_list_add.restype = c_void_p
+isl.isl_basic_set_list_add.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_set_list_get_at.restype = c_void_p
+isl.isl_basic_set_list_get_at.argtypes = [c_void_p, c_int]
+isl.isl_basic_set_list_clear.restype = c_void_p
+isl.isl_basic_set_list_clear.argtypes = [c_void_p]
+isl.isl_basic_set_list_coefficients.restype = c_void_p
+isl.isl_basic_set_list_coefficients.argtypes = [c_void_p]
+isl.isl_basic_set_list_concat.restype = c_void_p
+isl.isl_basic_set_list_concat.argtypes = [c_void_p, c_void_p]
+isl.isl_basic_set_list_drop.restype = c_void_p
+isl.isl_basic_set_list_drop.argtypes = [c_void_p, c_int, c_int]
+isl.isl_basic_set_list_foreach.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_basic_set_list_foreach_scc.argtypes = [c_void_p, c_void_p, c_void_p, c_void_p, c_void_p]
+isl.isl_basic_set_list_insert.restype = c_void_p
+isl.isl_basic_set_list_insert.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_basic_set_list_set_at.restype = c_void_p
+isl.isl_basic_set_list_set_at.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_basic_set_list_size.argtypes = [c_void_p]
+isl.isl_basic_set_list_copy.restype = c_void_p
+isl.isl_basic_set_list_copy.argtypes = [c_void_p]
+isl.isl_basic_set_list_free.restype = c_void_p
+isl.isl_basic_set_list_free.argtypes = [c_void_p]
+isl.isl_basic_set_list_to_str.restype = POINTER(c_char)
+isl.isl_basic_set_list_to_str.argtypes = [c_void_p]
+
+class constraint(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_constraint_free(self.ptr)
+    def aff(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_get_aff(arg0.ptr)
+        obj = aff(ctx=ctx, ptr=res)
+        return obj
+    def get_aff(arg0):
+        return arg0.aff()
+    @staticmethod
+    def alloc_equality(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_alloc_equality(isl.isl_local_space_copy(arg0.ptr))
+        obj = constraint(ctx=ctx, ptr=res)
+        return obj
+    @staticmethod
+    def alloc_inequality(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_alloc_inequality(isl.isl_local_space_copy(arg0.ptr))
+        obj = constraint(ctx=ctx, ptr=res)
+        return obj
+    def bound(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_get_bound(arg0.ptr, arg1, arg2)
+        obj = aff(ctx=ctx, ptr=res)
+        return obj
+    def get_bound(arg0, arg1, arg2):
+        return arg0.bound(arg1, arg2)
+    def coefficient_val(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_get_coefficient_val(arg0.ptr, arg1, arg2)
+        obj = val(ctx=ctx, ptr=res)
+        return obj
+    def get_coefficient_val(arg0, arg1, arg2):
+        return arg0.coefficient_val(arg1, arg2)
+    def constant_val(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_get_constant_val(arg0.ptr)
+        obj = val(ctx=ctx, ptr=res)
+        return obj
+    def get_constant_val(arg0):
+        return arg0.constant_val()
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
+    def dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_get_dim_name(arg0.ptr, arg1, arg2)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_dim_name(arg0, arg1, arg2):
+        return arg0.dim_name(arg1, arg2)
+    def div(arg0, arg1):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_get_div(arg0.ptr, arg1)
+        obj = aff(ctx=ctx, ptr=res)
+        return obj
+    def get_div(arg0, arg1):
+        return arg0.div(arg1)
+    def involves_dims(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_involves_dims(arg0.ptr, arg1, arg2, arg3)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_div_constraint(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_is_div_constraint(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_equal(arg0, arg1):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is constraint:
+                arg1 = constraint(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_is_equal(arg0.ptr, arg1.ptr)
+        return res
+    def is_equality(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_is_equality(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_lower_bound(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_is_lower_bound(arg0.ptr, arg1, arg2)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_upper_bound(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_is_upper_bound(arg0.ptr, arg1, arg2)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def local_space(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_get_local_space(arg0.ptr)
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def get_local_space(arg0):
+        return arg0.local_space()
+    def negate(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_negate(isl.isl_constraint_copy(arg0.ptr))
+        obj = constraint(ctx=ctx, ptr=res)
+        return obj
+    def set_coefficient_si(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_set_coefficient_si(isl.isl_constraint_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = constraint(ctx=ctx, ptr=res)
+        return obj
+    def set_coefficient_val(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        try:
+            if not arg3.__class__ is val:
+                arg3 = val(arg3)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_set_coefficient_val(isl.isl_constraint_copy(arg0.ptr), arg1, arg2, isl.isl_val_copy(arg3.ptr))
+        obj = constraint(ctx=ctx, ptr=res)
+        return obj
+    def set_constant_si(arg0, arg1):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_set_constant_si(isl.isl_constraint_copy(arg0.ptr), arg1)
+        obj = constraint(ctx=ctx, ptr=res)
+        return obj
+    def set_constant_val(arg0, arg1):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is val:
+                arg1 = val(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_set_constant_val(isl.isl_constraint_copy(arg0.ptr), isl.isl_val_copy(arg1.ptr))
+        obj = constraint(ctx=ctx, ptr=res)
+        return obj
+    def space(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_get_space(arg0.ptr)
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def get_space(arg0):
+        return arg0.space()
+    def to_list(arg0):
+        try:
+            if not arg0.__class__ is constraint:
+                arg0 = constraint(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_to_list(isl.isl_constraint_copy(arg0.ptr))
+        obj = constraint_list(ctx=ctx, ptr=res)
+        return obj
+
+isl.isl_constraint_get_aff.restype = c_void_p
+isl.isl_constraint_get_aff.argtypes = [c_void_p]
+isl.isl_constraint_alloc_equality.restype = c_void_p
+isl.isl_constraint_alloc_equality.argtypes = [c_void_p]
+isl.isl_constraint_alloc_inequality.restype = c_void_p
+isl.isl_constraint_alloc_inequality.argtypes = [c_void_p]
+isl.isl_constraint_get_bound.restype = c_void_p
+isl.isl_constraint_get_bound.argtypes = [c_void_p, c_int, c_int]
+isl.isl_constraint_get_coefficient_val.restype = c_void_p
+isl.isl_constraint_get_coefficient_val.argtypes = [c_void_p, c_int, c_int]
+isl.isl_constraint_get_constant_val.restype = c_void_p
+isl.isl_constraint_get_constant_val.argtypes = [c_void_p]
+isl.isl_constraint_dim.argtypes = [c_void_p, c_int]
+isl.isl_constraint_get_dim_name.restype = POINTER(c_char)
+isl.isl_constraint_get_dim_name.argtypes = [c_void_p, c_int, c_int]
+isl.isl_constraint_get_div.restype = c_void_p
+isl.isl_constraint_get_div.argtypes = [c_void_p, c_int]
+isl.isl_constraint_involves_dims.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_constraint_is_div_constraint.argtypes = [c_void_p]
+isl.isl_constraint_is_equal.argtypes = [c_void_p, c_void_p]
+isl.isl_constraint_is_equality.argtypes = [c_void_p]
+isl.isl_constraint_is_lower_bound.argtypes = [c_void_p, c_int, c_int]
+isl.isl_constraint_is_upper_bound.argtypes = [c_void_p, c_int, c_int]
+isl.isl_constraint_get_local_space.restype = c_void_p
+isl.isl_constraint_get_local_space.argtypes = [c_void_p]
+isl.isl_constraint_negate.restype = c_void_p
+isl.isl_constraint_negate.argtypes = [c_void_p]
+isl.isl_constraint_set_coefficient_si.restype = c_void_p
+isl.isl_constraint_set_coefficient_si.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_constraint_set_coefficient_val.restype = c_void_p
+isl.isl_constraint_set_coefficient_val.argtypes = [c_void_p, c_int, c_int, c_void_p]
+isl.isl_constraint_set_constant_si.restype = c_void_p
+isl.isl_constraint_set_constant_si.argtypes = [c_void_p, c_int]
+isl.isl_constraint_set_constant_val.restype = c_void_p
+isl.isl_constraint_set_constant_val.argtypes = [c_void_p, c_void_p]
+isl.isl_constraint_get_space.restype = c_void_p
+isl.isl_constraint_get_space.argtypes = [c_void_p]
+isl.isl_constraint_to_list.restype = c_void_p
+isl.isl_constraint_to_list.argtypes = [c_void_p]
+isl.isl_constraint_copy.restype = c_void_p
+isl.isl_constraint_copy.argtypes = [c_void_p]
+isl.isl_constraint_free.restype = c_void_p
+isl.isl_constraint_free.argtypes = [c_void_p]
+
+class constraint_list(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        if len(args) == 1 and type(args[0]) == int:
+            self.ctx = Context.getDefaultInstance()
+            self.ptr = isl.isl_constraint_list_alloc(self.ctx, args[0])
+            return
+        if len(args) == 1 and args[0].__class__ is constraint:
+            self.ctx = Context.getDefaultInstance()
+            self.ptr = isl.isl_constraint_list_from_constraint(isl.isl_constraint_copy(args[0].ptr))
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_constraint_list_free(self.ptr)
+    def __str__(arg0):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        ptr = isl.isl_constraint_list_to_str(arg0.ptr)
+        res = cast(ptr, c_char_p).value.decode('ascii')
+        libc.free(ptr)
+        return res
+    def __repr__(self):
+        s = str(self)
+        if '"' in s:
+            return 'isl.constraint_list("""%s""")' % s
+        else:
+            return 'isl.constraint_list("%s")' % s
+    def add(arg0, arg1):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is constraint:
+                arg1 = constraint(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_add(isl.isl_constraint_list_copy(arg0.ptr), isl.isl_constraint_copy(arg1.ptr))
+        obj = constraint_list(ctx=ctx, ptr=res)
+        return obj
+    def at(arg0, arg1):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_get_at(arg0.ptr, arg1)
+        obj = constraint(ctx=ctx, ptr=res)
+        return obj
+    def get_at(arg0, arg1):
+        return arg0.at(arg1)
+    def clear(arg0):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_clear(isl.isl_constraint_list_copy(arg0.ptr))
+        obj = constraint_list(ctx=ctx, ptr=res)
+        return obj
+    def concat(arg0, arg1):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is constraint_list:
+                arg1 = constraint_list(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_concat(isl.isl_constraint_list_copy(arg0.ptr), isl.isl_constraint_list_copy(arg1.ptr))
+        obj = constraint_list(ctx=ctx, ptr=res)
+        return obj
+    def drop(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_drop(isl.isl_constraint_list_copy(arg0.ptr), arg1, arg2)
+        obj = constraint_list(ctx=ctx, ptr=res)
+        return obj
+    def foreach(arg0, arg1):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = constraint(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_foreach(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def foreach_scc(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = constraint(ctx=arg0.ctx, ptr=isl.isl_constraint_copy(cb_arg0))
+            cb_arg1 = constraint(ctx=arg0.ctx, ptr=isl.isl_constraint_copy(cb_arg1))
+            try:
+                res = arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 1 if res else 0
+        cb1 = fn(cb_func)
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = constraint_list(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg2(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb2 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_foreach_scc(arg0.ptr, cb1, None, cb2, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def insert(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is constraint:
+                arg2 = constraint(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_insert(isl.isl_constraint_list_copy(arg0.ptr), arg1, isl.isl_constraint_copy(arg2.ptr))
+        obj = constraint_list(ctx=ctx, ptr=res)
+        return obj
+    def set_at(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is constraint:
+                arg2 = constraint(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_set_at(isl.isl_constraint_list_copy(arg0.ptr), arg1, isl.isl_constraint_copy(arg2.ptr))
+        obj = constraint_list(ctx=ctx, ptr=res)
+        return obj
+    def size(arg0):
+        try:
+            if not arg0.__class__ is constraint_list:
+                arg0 = constraint_list(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_constraint_list_size(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
+
+isl.isl_constraint_list_alloc.restype = c_void_p
+isl.isl_constraint_list_alloc.argtypes = [Context, c_int]
+isl.isl_constraint_list_from_constraint.restype = c_void_p
+isl.isl_constraint_list_from_constraint.argtypes = [c_void_p]
+isl.isl_constraint_list_add.restype = c_void_p
+isl.isl_constraint_list_add.argtypes = [c_void_p, c_void_p]
+isl.isl_constraint_list_get_at.restype = c_void_p
+isl.isl_constraint_list_get_at.argtypes = [c_void_p, c_int]
+isl.isl_constraint_list_clear.restype = c_void_p
+isl.isl_constraint_list_clear.argtypes = [c_void_p]
+isl.isl_constraint_list_concat.restype = c_void_p
+isl.isl_constraint_list_concat.argtypes = [c_void_p, c_void_p]
+isl.isl_constraint_list_drop.restype = c_void_p
+isl.isl_constraint_list_drop.argtypes = [c_void_p, c_int, c_int]
+isl.isl_constraint_list_foreach.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_constraint_list_foreach_scc.argtypes = [c_void_p, c_void_p, c_void_p, c_void_p, c_void_p]
+isl.isl_constraint_list_insert.restype = c_void_p
+isl.isl_constraint_list_insert.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_constraint_list_set_at.restype = c_void_p
+isl.isl_constraint_list_set_at.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_constraint_list_size.argtypes = [c_void_p]
+isl.isl_constraint_list_copy.restype = c_void_p
+isl.isl_constraint_list_copy.argtypes = [c_void_p]
+isl.isl_constraint_list_free.restype = c_void_p
+isl.isl_constraint_list_free.argtypes = [c_void_p]
+isl.isl_constraint_list_to_str.restype = POINTER(c_char)
+isl.isl_constraint_list_to_str.argtypes = [c_void_p]
 
 class fixed_box(object):
     def __init__(self, *args, **keywords):
@@ -13276,6 +16982,101 @@ class id_to_ast_expr(object):
             return 'isl.id_to_ast_expr("""%s""")' % s
         else:
             return 'isl.id_to_ast_expr("%s")' % s
+    def drop(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_ast_expr:
+                arg0 = id_to_ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id:
+                arg1 = id(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_id_to_ast_expr_drop(isl.isl_id_to_ast_expr_copy(arg0.ptr), isl.isl_id_copy(arg1.ptr))
+        obj = id_to_ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def every(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_ast_expr:
+                arg0 = id_to_ast_expr(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = id(ctx=arg0.ctx, ptr=isl.isl_id_copy(cb_arg0))
+            cb_arg1 = ast_expr(ctx=arg0.ctx, ptr=isl.isl_ast_expr_copy(cb_arg1))
+            try:
+                res = arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 1 if res else 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_id_to_ast_expr_every(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+        return bool(res)
+    def foreach(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_ast_expr:
+                arg0 = id_to_ast_expr(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = id(ctx=arg0.ctx, ptr=(cb_arg0))
+            cb_arg1 = ast_expr(ctx=arg0.ctx, ptr=(cb_arg1))
+            try:
+                arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_id_to_ast_expr_foreach(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def get(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_ast_expr:
+                arg0 = id_to_ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id:
+                arg1 = id(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_id_to_ast_expr_get(arg0.ptr, isl.isl_id_copy(arg1.ptr))
+        obj = ast_expr(ctx=ctx, ptr=res)
+        return obj
+    def has(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_ast_expr:
+                arg0 = id_to_ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id:
+                arg1 = id(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_id_to_ast_expr_has(arg0.ptr, arg1.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
     def is_equal(arg0, arg1):
         try:
             if not arg0.__class__ is id_to_ast_expr:
@@ -13312,14 +17113,36 @@ class id_to_ast_expr(object):
         res = isl.isl_id_to_ast_expr_set(isl.isl_id_to_ast_expr_copy(arg0.ptr), isl.isl_id_copy(arg1.ptr), isl.isl_ast_expr_copy(arg2.ptr))
         obj = id_to_ast_expr(ctx=ctx, ptr=res)
         return obj
+    def try_get(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_ast_expr:
+                arg0 = id_to_ast_expr(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id:
+                arg1 = id(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_id_to_ast_expr_try_get(arg0.ptr, arg1.ptr)
+        return res
 
 isl.isl_id_to_ast_expr_alloc.restype = c_void_p
 isl.isl_id_to_ast_expr_alloc.argtypes = [Context, c_int]
 isl.isl_id_to_ast_expr_read_from_str.restype = c_void_p
 isl.isl_id_to_ast_expr_read_from_str.argtypes = [Context, c_char_p]
+isl.isl_id_to_ast_expr_drop.restype = c_void_p
+isl.isl_id_to_ast_expr_drop.argtypes = [c_void_p, c_void_p]
+isl.isl_id_to_ast_expr_every.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_id_to_ast_expr_foreach.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_id_to_ast_expr_get.restype = c_void_p
+isl.isl_id_to_ast_expr_get.argtypes = [c_void_p, c_void_p]
+isl.isl_id_to_ast_expr_has.argtypes = [c_void_p, c_void_p]
 isl.isl_id_to_ast_expr_is_equal.argtypes = [c_void_p, c_void_p]
 isl.isl_id_to_ast_expr_set.restype = c_void_p
 isl.isl_id_to_ast_expr_set.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_id_to_ast_expr_try_get.argtypes = [c_void_p, c_void_p]
 isl.isl_id_to_ast_expr_copy.restype = c_void_p
 isl.isl_id_to_ast_expr_copy.argtypes = [c_void_p]
 isl.isl_id_to_ast_expr_free.restype = c_void_p
@@ -13361,6 +17184,101 @@ class id_to_id(object):
             return 'isl.id_to_id("""%s""")' % s
         else:
             return 'isl.id_to_id("%s")' % s
+    def drop(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_id:
+                arg0 = id_to_id(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id:
+                arg1 = id(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_id_to_id_drop(isl.isl_id_to_id_copy(arg0.ptr), isl.isl_id_copy(arg1.ptr))
+        obj = id_to_id(ctx=ctx, ptr=res)
+        return obj
+    def every(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_id:
+                arg0 = id_to_id(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = id(ctx=arg0.ctx, ptr=isl.isl_id_copy(cb_arg0))
+            cb_arg1 = id(ctx=arg0.ctx, ptr=isl.isl_id_copy(cb_arg1))
+            try:
+                res = arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 1 if res else 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_id_to_id_every(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+        return bool(res)
+    def foreach(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_id:
+                arg0 = id_to_id(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1, cb_arg2):
+            cb_arg0 = id(ctx=arg0.ctx, ptr=(cb_arg0))
+            cb_arg1 = id(ctx=arg0.ctx, ptr=(cb_arg1))
+            try:
+                arg1(cb_arg0, cb_arg1)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_id_to_id_foreach(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    def get(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_id:
+                arg0 = id_to_id(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id:
+                arg1 = id(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_id_to_id_get(arg0.ptr, isl.isl_id_copy(arg1.ptr))
+        obj = id(ctx=ctx, ptr=res)
+        return obj
+    def has(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_id:
+                arg0 = id_to_id(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id:
+                arg1 = id(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_id_to_id_has(arg0.ptr, arg1.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
     def is_equal(arg0, arg1):
         try:
             if not arg0.__class__ is id_to_id:
@@ -13397,20 +17315,394 @@ class id_to_id(object):
         res = isl.isl_id_to_id_set(isl.isl_id_to_id_copy(arg0.ptr), isl.isl_id_copy(arg1.ptr), isl.isl_id_copy(arg2.ptr))
         obj = id_to_id(ctx=ctx, ptr=res)
         return obj
+    def try_get(arg0, arg1):
+        try:
+            if not arg0.__class__ is id_to_id:
+                arg0 = id_to_id(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is id:
+                arg1 = id(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_id_to_id_try_get(arg0.ptr, arg1.ptr)
+        return res
 
 isl.isl_id_to_id_alloc.restype = c_void_p
 isl.isl_id_to_id_alloc.argtypes = [Context, c_int]
 isl.isl_id_to_id_read_from_str.restype = c_void_p
 isl.isl_id_to_id_read_from_str.argtypes = [Context, c_char_p]
+isl.isl_id_to_id_drop.restype = c_void_p
+isl.isl_id_to_id_drop.argtypes = [c_void_p, c_void_p]
+isl.isl_id_to_id_every.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_id_to_id_foreach.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_id_to_id_get.restype = c_void_p
+isl.isl_id_to_id_get.argtypes = [c_void_p, c_void_p]
+isl.isl_id_to_id_has.argtypes = [c_void_p, c_void_p]
 isl.isl_id_to_id_is_equal.argtypes = [c_void_p, c_void_p]
 isl.isl_id_to_id_set.restype = c_void_p
 isl.isl_id_to_id_set.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_id_to_id_try_get.argtypes = [c_void_p, c_void_p]
 isl.isl_id_to_id_copy.restype = c_void_p
 isl.isl_id_to_id_copy.argtypes = [c_void_p]
 isl.isl_id_to_id_free.restype = c_void_p
 isl.isl_id_to_id_free.argtypes = [c_void_p]
 isl.isl_id_to_id_to_str.restype = POINTER(c_char)
 isl.isl_id_to_id_to_str.argtypes = [c_void_p]
+
+class local_space(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_local_space_free(self.ptr)
+    def add_dims(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_add_dims(isl.isl_local_space_copy(arg0.ptr), arg1, arg2)
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
+    def dim_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_get_dim_id(arg0.ptr, arg1, arg2)
+        obj = id(ctx=ctx, ptr=res)
+        return obj
+    def get_dim_id(arg0, arg1, arg2):
+        return arg0.dim_id(arg1, arg2)
+    def dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_get_dim_name(arg0.ptr, arg1, arg2)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_dim_name(arg0, arg1, arg2):
+        return arg0.dim_name(arg1, arg2)
+    def div(arg0, arg1):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_get_div(arg0.ptr, arg1)
+        obj = aff(ctx=ctx, ptr=res)
+        return obj
+    def get_div(arg0, arg1):
+        return arg0.div(arg1)
+    def domain(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_domain(isl.isl_local_space_copy(arg0.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def drop_dims(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_drop_dims(isl.isl_local_space_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def find_dim_by_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_find_dim_by_name(arg0.ptr, arg1, arg2.encode('ascii'))
+        return res
+    def flatten_domain(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_flatten_domain(isl.isl_local_space_copy(arg0.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def flatten_range(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_flatten_range(isl.isl_local_space_copy(arg0.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def from_domain(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_from_domain(isl.isl_local_space_copy(arg0.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    @staticmethod
+    def from_space(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_from_space(isl.isl_space_copy(arg0.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def has_dim_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_has_dim_id(arg0.ptr, arg1, arg2)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def has_dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_has_dim_name(arg0.ptr, arg1, arg2)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def insert_dims(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_insert_dims(isl.isl_local_space_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def intersect(arg0, arg1):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is local_space:
+                arg1 = local_space(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_intersect(isl.isl_local_space_copy(arg0.ptr), isl.isl_local_space_copy(arg1.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def is_params(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_is_params(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_set(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_is_set(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def lifting(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_lifting(isl.isl_local_space_copy(arg0.ptr))
+        obj = basic_map(ctx=ctx, ptr=res)
+        return obj
+    def range(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_range(isl.isl_local_space_copy(arg0.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def set_dim_id(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        try:
+            if not arg3.__class__ is id:
+                arg3 = id(arg3)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_set_dim_id(isl.isl_local_space_copy(arg0.ptr), arg1, arg2, isl.isl_id_copy(arg3.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def set_dim_name(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_set_dim_name(isl.isl_local_space_copy(arg0.ptr), arg1, arg2, arg3.encode('ascii'))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def set_from_params(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_set_from_params(isl.isl_local_space_copy(arg0.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def set_tuple_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is id:
+                arg2 = id(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_set_tuple_id(isl.isl_local_space_copy(arg0.ptr), arg1, isl.isl_id_copy(arg2.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+    def space(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_get_space(arg0.ptr)
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def get_space(arg0):
+        return arg0.space()
+    def wrap(arg0):
+        try:
+            if not arg0.__class__ is local_space:
+                arg0 = local_space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_local_space_wrap(isl.isl_local_space_copy(arg0.ptr))
+        obj = local_space(ctx=ctx, ptr=res)
+        return obj
+
+isl.isl_local_space_add_dims.restype = c_void_p
+isl.isl_local_space_add_dims.argtypes = [c_void_p, c_int, c_int]
+isl.isl_local_space_dim.argtypes = [c_void_p, c_int]
+isl.isl_local_space_get_dim_id.restype = c_void_p
+isl.isl_local_space_get_dim_id.argtypes = [c_void_p, c_int, c_int]
+isl.isl_local_space_get_dim_name.restype = POINTER(c_char)
+isl.isl_local_space_get_dim_name.argtypes = [c_void_p, c_int, c_int]
+isl.isl_local_space_get_div.restype = c_void_p
+isl.isl_local_space_get_div.argtypes = [c_void_p, c_int]
+isl.isl_local_space_domain.restype = c_void_p
+isl.isl_local_space_domain.argtypes = [c_void_p]
+isl.isl_local_space_drop_dims.restype = c_void_p
+isl.isl_local_space_drop_dims.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_local_space_find_dim_by_name.argtypes = [c_void_p, c_int, c_char_p]
+isl.isl_local_space_flatten_domain.restype = c_void_p
+isl.isl_local_space_flatten_domain.argtypes = [c_void_p]
+isl.isl_local_space_flatten_range.restype = c_void_p
+isl.isl_local_space_flatten_range.argtypes = [c_void_p]
+isl.isl_local_space_from_domain.restype = c_void_p
+isl.isl_local_space_from_domain.argtypes = [c_void_p]
+isl.isl_local_space_from_space.restype = c_void_p
+isl.isl_local_space_from_space.argtypes = [c_void_p]
+isl.isl_local_space_has_dim_id.argtypes = [c_void_p, c_int, c_int]
+isl.isl_local_space_has_dim_name.argtypes = [c_void_p, c_int, c_int]
+isl.isl_local_space_insert_dims.restype = c_void_p
+isl.isl_local_space_insert_dims.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_local_space_intersect.restype = c_void_p
+isl.isl_local_space_intersect.argtypes = [c_void_p, c_void_p]
+isl.isl_local_space_is_params.argtypes = [c_void_p]
+isl.isl_local_space_is_set.argtypes = [c_void_p]
+isl.isl_local_space_lifting.restype = c_void_p
+isl.isl_local_space_lifting.argtypes = [c_void_p]
+isl.isl_local_space_range.restype = c_void_p
+isl.isl_local_space_range.argtypes = [c_void_p]
+isl.isl_local_space_set_dim_id.restype = c_void_p
+isl.isl_local_space_set_dim_id.argtypes = [c_void_p, c_int, c_int, c_void_p]
+isl.isl_local_space_set_dim_name.restype = c_void_p
+isl.isl_local_space_set_dim_name.argtypes = [c_void_p, c_int, c_int, c_char_p]
+isl.isl_local_space_set_from_params.restype = c_void_p
+isl.isl_local_space_set_from_params.argtypes = [c_void_p]
+isl.isl_local_space_set_tuple_id.restype = c_void_p
+isl.isl_local_space_set_tuple_id.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_local_space_get_space.restype = c_void_p
+isl.isl_local_space_get_space.argtypes = [c_void_p]
+isl.isl_local_space_wrap.restype = c_void_p
+isl.isl_local_space_wrap.argtypes = [c_void_p]
+isl.isl_local_space_copy.restype = c_void_p
+isl.isl_local_space_copy.argtypes = [c_void_p]
+isl.isl_local_space_free.restype = c_void_p
+isl.isl_local_space_free.argtypes = [c_void_p]
 
 class map_list(object):
     def __init__(self, *args, **keywords):
@@ -13641,6 +17933,562 @@ isl.isl_map_list_free.restype = c_void_p
 isl.isl_map_list_free.argtypes = [c_void_p]
 isl.isl_map_list_to_str.restype = POINTER(c_char)
 isl.isl_map_list_to_str.argtypes = [c_void_p]
+
+class mat(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_mat_free(self.ptr)
+    def __str__(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ptr = isl.isl_mat_to_str(arg0.ptr)
+        res = cast(ptr, c_char_p).value.decode('ascii')
+        libc.free(ptr)
+        return res
+    def __repr__(self):
+        s = str(self)
+        if '"' in s:
+            return 'isl.mat("""%s""")' % s
+        else:
+            return 'isl.mat("%s")' % s
+    def add_rows(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_add_rows(isl.isl_mat_copy(arg0.ptr), arg1)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def add_zero_cols(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_add_zero_cols(isl.isl_mat_copy(arg0.ptr), arg1)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def add_zero_rows(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_add_zero_rows(isl.isl_mat_copy(arg0.ptr), arg1)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def aff_direct_sum(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is mat:
+                arg1 = mat(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_aff_direct_sum(isl.isl_mat_copy(arg0.ptr), isl.isl_mat_copy(arg1.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def col_add(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_col_add(arg0.ptr, arg1, arg2)
+        return res
+    def cols(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_cols(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
+    def concat(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is mat:
+                arg1 = mat(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_concat(isl.isl_mat_copy(arg0.ptr), isl.isl_mat_copy(arg1.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def diagonal(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is mat:
+                arg1 = mat(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_diagonal(isl.isl_mat_copy(arg0.ptr), isl.isl_mat_copy(arg1.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def drop_cols(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_drop_cols(isl.isl_mat_copy(arg0.ptr), arg1, arg2)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def drop_rows(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_drop_rows(isl.isl_mat_copy(arg0.ptr), arg1, arg2)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def element_val(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_get_element_val(arg0.ptr, arg1, arg2)
+        obj = val(ctx=ctx, ptr=res)
+        return obj
+    def get_element_val(arg0, arg1, arg2):
+        return arg0.element_val(arg1, arg2)
+    @staticmethod
+    def from_row_vec(arg0):
+        try:
+            if not arg0.__class__ is vec:
+                arg0 = vec(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_from_row_vec(isl.isl_vec_copy(arg0.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def has_linearly_independent_rows(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is mat:
+                arg1 = mat(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_has_linearly_independent_rows(arg0.ptr, arg1.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def initial_non_zero_cols(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_initial_non_zero_cols(arg0.ptr)
+        return res
+    def insert_cols(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_insert_cols(isl.isl_mat_copy(arg0.ptr), arg1, arg2)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def insert_rows(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_insert_rows(isl.isl_mat_copy(arg0.ptr), arg1, arg2)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def insert_zero_cols(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_insert_zero_cols(isl.isl_mat_copy(arg0.ptr), arg1, arg2)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def insert_zero_rows(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_insert_zero_rows(isl.isl_mat_copy(arg0.ptr), arg1, arg2)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def inverse_product(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is mat:
+                arg1 = mat(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_inverse_product(isl.isl_mat_copy(arg0.ptr), isl.isl_mat_copy(arg1.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def lin_to_aff(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_lin_to_aff(isl.isl_mat_copy(arg0.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def move_cols(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_move_cols(isl.isl_mat_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def normalize(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_normalize(isl.isl_mat_copy(arg0.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def normalize_row(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_normalize_row(isl.isl_mat_copy(arg0.ptr), arg1)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def product(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is mat:
+                arg1 = mat(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_product(isl.isl_mat_copy(arg0.ptr), isl.isl_mat_copy(arg1.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def rank(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_rank(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
+    def right_inverse(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_right_inverse(isl.isl_mat_copy(arg0.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def right_kernel(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_right_kernel(isl.isl_mat_copy(arg0.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def row_basis(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_row_basis(isl.isl_mat_copy(arg0.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def row_basis_extension(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is mat:
+                arg1 = mat(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_row_basis_extension(isl.isl_mat_copy(arg0.ptr), isl.isl_mat_copy(arg1.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def rows(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_rows(arg0.ptr)
+        if res < 0:
+            raise Error
+        return int(res)
+    def set_element_si(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_set_element_si(isl.isl_mat_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def set_element_val(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg3.__class__ is val:
+                arg3 = val(arg3)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_set_element_val(isl.isl_mat_copy(arg0.ptr), arg1, arg2, isl.isl_val_copy(arg3.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def swap_cols(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_swap_cols(isl.isl_mat_copy(arg0.ptr), arg1, arg2)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def swap_rows(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_swap_rows(isl.isl_mat_copy(arg0.ptr), arg1, arg2)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def transpose(arg0):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_transpose(isl.isl_mat_copy(arg0.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def unimodular_complete(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_unimodular_complete(isl.isl_mat_copy(arg0.ptr), arg1)
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def vec_concat(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is vec:
+                arg1 = vec(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_vec_concat(isl.isl_mat_copy(arg0.ptr), isl.isl_vec_copy(arg1.ptr))
+        obj = mat(ctx=ctx, ptr=res)
+        return obj
+    def vec_inverse_product(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is vec:
+                arg1 = vec(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_vec_inverse_product(isl.isl_mat_copy(arg0.ptr), isl.isl_vec_copy(arg1.ptr))
+        obj = vec(ctx=ctx, ptr=res)
+        return obj
+    def vec_product(arg0, arg1):
+        try:
+            if not arg0.__class__ is mat:
+                arg0 = mat(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is vec:
+                arg1 = vec(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_mat_vec_product(isl.isl_mat_copy(arg0.ptr), isl.isl_vec_copy(arg1.ptr))
+        obj = vec(ctx=ctx, ptr=res)
+        return obj
+
+isl.isl_mat_add_rows.restype = c_void_p
+isl.isl_mat_add_rows.argtypes = [c_void_p, c_int]
+isl.isl_mat_add_zero_cols.restype = c_void_p
+isl.isl_mat_add_zero_cols.argtypes = [c_void_p, c_int]
+isl.isl_mat_add_zero_rows.restype = c_void_p
+isl.isl_mat_add_zero_rows.argtypes = [c_void_p, c_int]
+isl.isl_mat_aff_direct_sum.restype = c_void_p
+isl.isl_mat_aff_direct_sum.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_col_add.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_cols.argtypes = [c_void_p]
+isl.isl_mat_concat.restype = c_void_p
+isl.isl_mat_concat.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_diagonal.restype = c_void_p
+isl.isl_mat_diagonal.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_drop_cols.restype = c_void_p
+isl.isl_mat_drop_cols.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_drop_rows.restype = c_void_p
+isl.isl_mat_drop_rows.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_get_element_val.restype = c_void_p
+isl.isl_mat_get_element_val.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_from_row_vec.restype = c_void_p
+isl.isl_mat_from_row_vec.argtypes = [c_void_p]
+isl.isl_mat_has_linearly_independent_rows.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_initial_non_zero_cols.argtypes = [c_void_p]
+isl.isl_mat_insert_cols.restype = c_void_p
+isl.isl_mat_insert_cols.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_insert_rows.restype = c_void_p
+isl.isl_mat_insert_rows.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_insert_zero_cols.restype = c_void_p
+isl.isl_mat_insert_zero_cols.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_insert_zero_rows.restype = c_void_p
+isl.isl_mat_insert_zero_rows.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_inverse_product.restype = c_void_p
+isl.isl_mat_inverse_product.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_lin_to_aff.restype = c_void_p
+isl.isl_mat_lin_to_aff.argtypes = [c_void_p]
+isl.isl_mat_move_cols.restype = c_void_p
+isl.isl_mat_move_cols.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_mat_normalize.restype = c_void_p
+isl.isl_mat_normalize.argtypes = [c_void_p]
+isl.isl_mat_normalize_row.restype = c_void_p
+isl.isl_mat_normalize_row.argtypes = [c_void_p, c_int]
+isl.isl_mat_product.restype = c_void_p
+isl.isl_mat_product.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_rank.argtypes = [c_void_p]
+isl.isl_mat_right_inverse.restype = c_void_p
+isl.isl_mat_right_inverse.argtypes = [c_void_p]
+isl.isl_mat_right_kernel.restype = c_void_p
+isl.isl_mat_right_kernel.argtypes = [c_void_p]
+isl.isl_mat_row_basis.restype = c_void_p
+isl.isl_mat_row_basis.argtypes = [c_void_p]
+isl.isl_mat_row_basis_extension.restype = c_void_p
+isl.isl_mat_row_basis_extension.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_rows.argtypes = [c_void_p]
+isl.isl_mat_set_element_si.restype = c_void_p
+isl.isl_mat_set_element_si.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_mat_set_element_val.restype = c_void_p
+isl.isl_mat_set_element_val.argtypes = [c_void_p, c_int, c_int, c_void_p]
+isl.isl_mat_swap_cols.restype = c_void_p
+isl.isl_mat_swap_cols.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_swap_rows.restype = c_void_p
+isl.isl_mat_swap_rows.argtypes = [c_void_p, c_int, c_int]
+isl.isl_mat_transpose.restype = c_void_p
+isl.isl_mat_transpose.argtypes = [c_void_p]
+isl.isl_mat_unimodular_complete.restype = c_void_p
+isl.isl_mat_unimodular_complete.argtypes = [c_void_p, c_int]
+isl.isl_mat_vec_concat.restype = c_void_p
+isl.isl_mat_vec_concat.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_vec_inverse_product.restype = c_void_p
+isl.isl_mat_vec_inverse_product.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_vec_product.restype = c_void_p
+isl.isl_mat_vec_product.argtypes = [c_void_p, c_void_p]
+isl.isl_mat_copy.restype = c_void_p
+isl.isl_mat_copy.argtypes = [c_void_p]
+isl.isl_mat_free.restype = c_void_p
+isl.isl_mat_free.argtypes = [c_void_p]
+isl.isl_mat_to_str.restype = POINTER(c_char)
+isl.isl_mat_to_str.argtypes = [c_void_p]
 
 class multi_id(object):
     def __init__(self, *args, **keywords):
@@ -14266,6 +19114,28 @@ class point(basic_set):
             return 'isl.point("""%s""")' % s
         else:
             return 'isl.point("%s")' % s
+    def add_ui(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is point:
+                arg0 = point(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_point_add_ui(isl.isl_point_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = point(ctx=ctx, ptr=res)
+        return obj
+    def coordinate_val(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is point:
+                arg0 = point(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_point_get_coordinate_val(arg0.ptr, arg1, arg2)
+        obj = val(ctx=ctx, ptr=res)
+        return obj
+    def get_coordinate_val(arg0, arg1, arg2):
+        return arg0.coordinate_val(arg1, arg2)
     def multi_val(arg0):
         try:
             if not arg0.__class__ is point:
@@ -14278,6 +19148,43 @@ class point(basic_set):
         return obj
     def get_multi_val(arg0):
         return arg0.multi_val()
+    def set_coordinate_val(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is point:
+                arg0 = point(arg0)
+        except:
+            raise
+        try:
+            if not arg3.__class__ is val:
+                arg3 = val(arg3)
+        except:
+            return basic_set(arg0).set_coordinate_val(arg1, arg2, arg3)
+        ctx = arg0.ctx
+        res = isl.isl_point_set_coordinate_val(isl.isl_point_copy(arg0.ptr), arg1, arg2, isl.isl_val_copy(arg3.ptr))
+        obj = point(ctx=ctx, ptr=res)
+        return obj
+    def space(arg0):
+        try:
+            if not arg0.__class__ is point:
+                arg0 = point(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_point_get_space(arg0.ptr)
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def get_space(arg0):
+        return arg0.space()
+    def sub_ui(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is point:
+                arg0 = point(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_point_sub_ui(isl.isl_point_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = point(ctx=ctx, ptr=res)
+        return obj
     def to_set(arg0):
         try:
             if not arg0.__class__ is point:
@@ -14288,17 +19195,271 @@ class point(basic_set):
         res = isl.isl_point_to_set(isl.isl_point_copy(arg0.ptr))
         obj = set(ctx=ctx, ptr=res)
         return obj
+    @staticmethod
+    def void(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_point_void(isl.isl_space_copy(arg0.ptr))
+        obj = point(ctx=ctx, ptr=res)
+        return obj
+    @staticmethod
+    def zero(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_point_zero(isl.isl_space_copy(arg0.ptr))
+        obj = point(ctx=ctx, ptr=res)
+        return obj
 
+isl.isl_point_add_ui.restype = c_void_p
+isl.isl_point_add_ui.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_point_get_coordinate_val.restype = c_void_p
+isl.isl_point_get_coordinate_val.argtypes = [c_void_p, c_int, c_int]
 isl.isl_point_get_multi_val.restype = c_void_p
 isl.isl_point_get_multi_val.argtypes = [c_void_p]
+isl.isl_point_set_coordinate_val.restype = c_void_p
+isl.isl_point_set_coordinate_val.argtypes = [c_void_p, c_int, c_int, c_void_p]
+isl.isl_point_get_space.restype = c_void_p
+isl.isl_point_get_space.argtypes = [c_void_p]
+isl.isl_point_sub_ui.restype = c_void_p
+isl.isl_point_sub_ui.argtypes = [c_void_p, c_int, c_int, c_int]
 isl.isl_point_to_set.restype = c_void_p
 isl.isl_point_to_set.argtypes = [c_void_p]
+isl.isl_point_void.restype = c_void_p
+isl.isl_point_void.argtypes = [c_void_p]
+isl.isl_point_zero.restype = c_void_p
+isl.isl_point_zero.argtypes = [c_void_p]
 isl.isl_point_copy.restype = c_void_p
 isl.isl_point_copy.argtypes = [c_void_p]
 isl.isl_point_free.restype = c_void_p
 isl.isl_point_free.argtypes = [c_void_p]
 isl.isl_point_to_str.restype = POINTER(c_char)
 isl.isl_point_to_str.argtypes = [c_void_p]
+
+class printer(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_printer_free(self.ptr)
+    def __str__(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ptr = isl.isl_printer_to_str(arg0.ptr)
+        res = cast(ptr, c_char_p).value.decode('ascii')
+        libc.free(ptr)
+        return res
+    def __repr__(self):
+        s = str(self)
+        if '"' in s:
+            return 'isl.printer("""%s""")' % s
+        else:
+            return 'isl.printer("%s")' % s
+    def end_line(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_end_line(isl.isl_printer_copy(arg0.ptr))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def flush(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_flush(isl.isl_printer_copy(arg0.ptr))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def free(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_free(isl.isl_printer_copy(arg0.ptr))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    @staticmethod
+    def from_file(arg0):
+        ctx = Context.getDefaultInstance()
+        res = isl.isl_printer_from_file(ctx, arg0.encode('ascii'))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_ast_expr(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_expr:
+                arg1 = ast_expr(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_ast_expr(isl.isl_printer_copy(arg0.ptr), arg1.ptr)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_ast_node(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is ast_node:
+                arg1 = ast_node(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_ast_node(isl.isl_printer_copy(arg0.ptr), arg1.ptr)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_double(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_double(isl.isl_printer_copy(arg0.ptr), arg1)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_int(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_int(isl.isl_printer_copy(arg0.ptr), arg1)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_local_space(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is local_space:
+                arg1 = local_space(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_local_space(isl.isl_printer_copy(arg0.ptr), arg1.ptr)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_schedule(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is schedule:
+                arg1 = schedule(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_schedule(isl.isl_printer_copy(arg0.ptr), arg1.ptr)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def print_str(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_print_str(isl.isl_printer_copy(arg0.ptr), arg1.encode('ascii'))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def set_output_format(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_set_output_format(isl.isl_printer_copy(arg0.ptr), arg1)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def set_yaml_style(arg0, arg1):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_set_yaml_style(isl.isl_printer_copy(arg0.ptr), arg1)
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+    def start_line(arg0):
+        try:
+            if not arg0.__class__ is printer:
+                arg0 = printer(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_printer_start_line(isl.isl_printer_copy(arg0.ptr))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
+
+isl.isl_printer_end_line.restype = c_void_p
+isl.isl_printer_end_line.argtypes = [c_void_p]
+isl.isl_printer_flush.restype = c_void_p
+isl.isl_printer_flush.argtypes = [c_void_p]
+isl.isl_printer_free.restype = c_void_p
+isl.isl_printer_free.argtypes = [c_void_p]
+isl.isl_printer_from_file.restype = c_void_p
+isl.isl_printer_from_file.argtypes = [Context, c_char_p]
+isl.isl_printer_print_ast_expr.restype = c_void_p
+isl.isl_printer_print_ast_expr.argtypes = [c_void_p, c_void_p]
+isl.isl_printer_print_ast_node.restype = c_void_p
+isl.isl_printer_print_ast_node.argtypes = [c_void_p, c_void_p]
+isl.isl_printer_print_double.restype = c_void_p
+isl.isl_printer_print_double.argtypes = [c_void_p, c_int]
+isl.isl_printer_print_int.restype = c_void_p
+isl.isl_printer_print_int.argtypes = [c_void_p, c_int]
+isl.isl_printer_print_local_space.restype = c_void_p
+isl.isl_printer_print_local_space.argtypes = [c_void_p, c_void_p]
+isl.isl_printer_print_schedule.restype = c_void_p
+isl.isl_printer_print_schedule.argtypes = [c_void_p, c_void_p]
+isl.isl_printer_print_str.restype = c_void_p
+isl.isl_printer_print_str.argtypes = [c_void_p, c_char_p]
+isl.isl_printer_set_output_format.restype = c_void_p
+isl.isl_printer_set_output_format.argtypes = [c_void_p, c_int]
+isl.isl_printer_set_yaml_style.restype = c_void_p
+isl.isl_printer_set_yaml_style.argtypes = [c_void_p, c_int]
+isl.isl_printer_start_line.restype = c_void_p
+isl.isl_printer_start_line.argtypes = [c_void_p]
+isl.isl_printer_copy.restype = c_void_p
+isl.isl_printer_copy.argtypes = [c_void_p]
+isl.isl_printer_free.restype = c_void_p
+isl.isl_printer_free.argtypes = [c_void_p]
+isl.isl_printer_to_str.restype = c_void_p
+isl.isl_printer_to_str.argtypes = [Context]
 
 class pw_aff_list(object):
     def __init__(self, *args, **keywords):
@@ -14790,6 +19951,21 @@ class schedule(object):
             return 'isl.schedule("""%s""")' % s
         else:
             return 'isl.schedule("%s")' % s
+    def align_params(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is space:
+                arg1 = space(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_align_params(isl.isl_schedule_copy(arg0.ptr), isl.isl_space_copy(arg1.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
     def domain(arg0):
         try:
             if not arg0.__class__ is schedule:
@@ -14803,6 +19979,60 @@ class schedule(object):
     def get_domain(arg0):
         return arg0.domain()
     @staticmethod
+    def empty(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_empty(isl.isl_space_copy(arg0.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
+    def expand(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is union_pw_multi_aff:
+                arg1 = union_pw_multi_aff(arg1)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is schedule:
+                arg2 = schedule(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_expand(isl.isl_schedule_copy(arg0.ptr), isl.isl_union_pw_multi_aff_copy(arg1.ptr), isl.isl_schedule_copy(arg2.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
+    def foreach_schedule_node_top_down(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = schedule_node(ctx=arg0.ctx, ptr=isl.isl_schedule_node_copy(cb_arg0))
+            try:
+                res = arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 1 if res else 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_schedule_foreach_schedule_node_top_down(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+    @staticmethod
     def from_domain(arg0):
         try:
             if not arg0.__class__ is union_set:
@@ -14811,6 +20041,81 @@ class schedule(object):
             raise
         ctx = arg0.ctx
         res = isl.isl_schedule_from_domain(isl.isl_union_set_copy(arg0.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
+    def gist_domain_params(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is set:
+                arg1 = set(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_gist_domain_params(isl.isl_schedule_copy(arg0.ptr), isl.isl_set_copy(arg1.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
+    def insert_context(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is set:
+                arg1 = set(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_insert_context(isl.isl_schedule_copy(arg0.ptr), isl.isl_set_copy(arg1.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
+    def insert_guard(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is set:
+                arg1 = set(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_insert_guard(isl.isl_schedule_copy(arg0.ptr), isl.isl_set_copy(arg1.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
+    def insert_partial_schedule(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is multi_union_pw_aff:
+                arg1 = multi_union_pw_aff(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_insert_partial_schedule(isl.isl_schedule_copy(arg0.ptr), isl.isl_multi_union_pw_aff_copy(arg1.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
+    def intersect_domain(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is union_set:
+                arg1 = union_set(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_intersect_domain(isl.isl_schedule_copy(arg0.ptr), isl.isl_union_set_copy(arg1.ptr))
         obj = schedule(ctx=ctx, ptr=res)
         return obj
     def map(arg0):
@@ -14825,6 +20130,29 @@ class schedule(object):
         return obj
     def get_map(arg0):
         return arg0.map()
+    def map_schedule_node_bottom_up(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_void_p, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = schedule_node(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                res = arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return None
+            return isl.isl_schedule_node_copy(res.ptr)
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_schedule_map_schedule_node_bottom_up(isl.isl_schedule_copy(arg0.ptr), cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
     def pullback(*args):
         if len(args) == 2 and args[1].__class__ is union_pw_multi_aff:
             args = list(args)
@@ -14838,6 +20166,16 @@ class schedule(object):
             obj = schedule(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def reset_user(arg0):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_reset_user(isl.isl_schedule_copy(arg0.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
     def root(arg0):
         try:
             if not arg0.__class__ is schedule:
@@ -14850,19 +20188,74 @@ class schedule(object):
         return obj
     def get_root(arg0):
         return arg0.root()
+    def sequence(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is schedule:
+                arg1 = schedule(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_sequence(isl.isl_schedule_copy(arg0.ptr), isl.isl_schedule_copy(arg1.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
+    def set(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule:
+                arg0 = schedule(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is schedule:
+                arg1 = schedule(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_set(isl.isl_schedule_copy(arg0.ptr), isl.isl_schedule_copy(arg1.ptr))
+        obj = schedule(ctx=ctx, ptr=res)
+        return obj
 
 isl.isl_schedule_read_from_str.restype = c_void_p
 isl.isl_schedule_read_from_str.argtypes = [Context, c_char_p]
+isl.isl_schedule_align_params.restype = c_void_p
+isl.isl_schedule_align_params.argtypes = [c_void_p, c_void_p]
 isl.isl_schedule_get_domain.restype = c_void_p
 isl.isl_schedule_get_domain.argtypes = [c_void_p]
+isl.isl_schedule_empty.restype = c_void_p
+isl.isl_schedule_empty.argtypes = [c_void_p]
+isl.isl_schedule_expand.restype = c_void_p
+isl.isl_schedule_expand.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_schedule_foreach_schedule_node_top_down.argtypes = [c_void_p, c_void_p, c_void_p]
 isl.isl_schedule_from_domain.restype = c_void_p
 isl.isl_schedule_from_domain.argtypes = [c_void_p]
+isl.isl_schedule_gist_domain_params.restype = c_void_p
+isl.isl_schedule_gist_domain_params.argtypes = [c_void_p, c_void_p]
+isl.isl_schedule_insert_context.restype = c_void_p
+isl.isl_schedule_insert_context.argtypes = [c_void_p, c_void_p]
+isl.isl_schedule_insert_guard.restype = c_void_p
+isl.isl_schedule_insert_guard.argtypes = [c_void_p, c_void_p]
+isl.isl_schedule_insert_partial_schedule.restype = c_void_p
+isl.isl_schedule_insert_partial_schedule.argtypes = [c_void_p, c_void_p]
+isl.isl_schedule_intersect_domain.restype = c_void_p
+isl.isl_schedule_intersect_domain.argtypes = [c_void_p, c_void_p]
 isl.isl_schedule_get_map.restype = c_void_p
 isl.isl_schedule_get_map.argtypes = [c_void_p]
+isl.isl_schedule_map_schedule_node_bottom_up.restype = c_void_p
+isl.isl_schedule_map_schedule_node_bottom_up.argtypes = [c_void_p, c_void_p, c_void_p]
 isl.isl_schedule_pullback_union_pw_multi_aff.restype = c_void_p
 isl.isl_schedule_pullback_union_pw_multi_aff.argtypes = [c_void_p, c_void_p]
+isl.isl_schedule_reset_user.restype = c_void_p
+isl.isl_schedule_reset_user.argtypes = [c_void_p]
 isl.isl_schedule_get_root.restype = c_void_p
 isl.isl_schedule_get_root.argtypes = [c_void_p]
+isl.isl_schedule_sequence.restype = c_void_p
+isl.isl_schedule_sequence.argtypes = [c_void_p, c_void_p]
+isl.isl_schedule_set.restype = c_void_p
+isl.isl_schedule_set.argtypes = [c_void_p, c_void_p]
 isl.isl_schedule_copy.restype = c_void_p
 isl.isl_schedule_copy.argtypes = [c_void_p]
 isl.isl_schedule_free.restype = c_void_p
@@ -14900,6 +20293,21 @@ class schedule_constraints(object):
             return 'isl.schedule_constraints("""%s""")' % s
         else:
             return 'isl.schedule_constraints("%s")' % s
+    def apply(arg0, arg1):
+        try:
+            if not arg0.__class__ is schedule_constraints:
+                arg0 = schedule_constraints(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is union_map:
+                arg1 = union_map(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_constraints_apply(isl.isl_schedule_constraints_copy(arg0.ptr), isl.isl_union_map_copy(arg1.ptr))
+        obj = schedule_constraints(ctx=ctx, ptr=res)
+        return obj
     def coincidence(arg0):
         try:
             if not arg0.__class__ is schedule_constraints:
@@ -15088,6 +20496,8 @@ class schedule_constraints(object):
 
 isl.isl_schedule_constraints_read_from_str.restype = c_void_p
 isl.isl_schedule_constraints_read_from_str.argtypes = [Context, c_char_p]
+isl.isl_schedule_constraints_apply.restype = c_void_p
+isl.isl_schedule_constraints_apply.argtypes = [c_void_p, c_void_p]
 isl.isl_schedule_constraints_get_coincidence.restype = c_void_p
 isl.isl_schedule_constraints_get_coincidence.argtypes = [c_void_p]
 isl.isl_schedule_constraints_compute_schedule.restype = c_void_p
@@ -15271,6 +20681,26 @@ class schedule_node(object):
         return int(res)
     def get_child_position(arg0):
         return arg0.child_position()
+    def cut(arg0):
+        try:
+            if not arg0.__class__ is schedule_node:
+                arg0 = schedule_node(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_node_cut(isl.isl_schedule_node_copy(arg0.ptr))
+        obj = schedule_node(ctx=ctx, ptr=res)
+        return obj
+    def delete(arg0):
+        try:
+            if not arg0.__class__ is schedule_node:
+                arg0 = schedule_node(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_node_delete(isl.isl_schedule_node_copy(arg0.ptr))
+        obj = schedule_node(ctx=ctx, ptr=res)
+        return obj
     def every_descendant(arg0, arg1):
         try:
             if not arg0.__class__ is schedule_node:
@@ -15768,6 +21198,10 @@ isl.isl_schedule_node_get_ancestor_child_position.argtypes = [c_void_p, c_void_p
 isl.isl_schedule_node_child.restype = c_void_p
 isl.isl_schedule_node_child.argtypes = [c_void_p, c_int]
 isl.isl_schedule_node_get_child_position.argtypes = [c_void_p]
+isl.isl_schedule_node_cut.restype = c_void_p
+isl.isl_schedule_node_cut.argtypes = [c_void_p]
+isl.isl_schedule_node_delete.restype = c_void_p
+isl.isl_schedule_node_delete.argtypes = [c_void_p]
 isl.isl_schedule_node_every_descendant.argtypes = [c_void_p, c_void_p, c_void_p]
 isl.isl_schedule_node_first_child.restype = c_void_p
 isl.isl_schedule_node_first_child.argtypes = [c_void_p]
@@ -16029,6 +21463,18 @@ class schedule_node_band(schedule_node):
         res = isl.isl_schedule_node_band_shift(isl.isl_schedule_node_copy(arg0.ptr), isl.isl_multi_union_pw_aff_copy(arg1.ptr))
         obj = schedule_node(ctx=ctx, ptr=res)
         return obj
+    def space(arg0):
+        try:
+            if not arg0.__class__ is schedule_node:
+                arg0 = schedule_node(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_schedule_node_band_get_space(arg0.ptr)
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def get_space(arg0):
+        return arg0.space()
     def split(arg0, arg1):
         try:
             if not arg0.__class__ is schedule_node:
@@ -16118,6 +21564,8 @@ isl.isl_schedule_node_band_set_permutable.restype = c_void_p
 isl.isl_schedule_node_band_set_permutable.argtypes = [c_void_p, c_int]
 isl.isl_schedule_node_band_shift.restype = c_void_p
 isl.isl_schedule_node_band_shift.argtypes = [c_void_p, c_void_p]
+isl.isl_schedule_node_band_get_space.restype = c_void_p
+isl.isl_schedule_node_band_get_space.argtypes = [c_void_p]
 isl.isl_schedule_node_band_split.restype = c_void_p
 isl.isl_schedule_node_band_split.argtypes = [c_void_p, c_int]
 isl.isl_schedule_node_band_tile.restype = c_void_p
@@ -16898,6 +22346,65 @@ class space(object):
             obj = space(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def align_params(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is space:
+                arg1 = space(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_align_params(isl.isl_space_copy(arg0.ptr), isl.isl_space_copy(arg1.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def can_curry(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_can_curry(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def can_range_curry(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_can_range_curry(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def can_uncurry(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_can_uncurry(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def can_zip(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_can_zip(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
     def curry(arg0):
         try:
             if not arg0.__class__ is space:
@@ -16908,6 +22415,43 @@ class space(object):
         res = isl.isl_space_curry(isl.isl_space_copy(arg0.ptr))
         obj = space(ctx=ctx, ptr=res)
         return obj
+    def dim(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_dim(arg0.ptr, arg1)
+        if res < 0:
+            raise Error
+        return int(res)
+    def dim_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_get_dim_id(arg0.ptr, arg1, arg2)
+        obj = id(ctx=ctx, ptr=res)
+        return obj
+    def get_dim_id(arg0, arg1, arg2):
+        return arg0.dim_id(arg1, arg2)
+    def dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_get_dim_name(arg0.ptr, arg1, arg2)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_dim_name(arg0, arg1, arg2):
+        return arg0.dim_name(arg1, arg2)
     def domain(arg0):
         try:
             if not arg0.__class__ is space:
@@ -16916,6 +22460,27 @@ class space(object):
             raise
         ctx = arg0.ctx
         res = isl.isl_space_domain(isl.isl_space_copy(arg0.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def domain_is_wrapping(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_domain_is_wrapping(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def domain_map(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_domain_map(isl.isl_space_copy(arg0.ptr))
         obj = space(ctx=ctx, ptr=res)
         return obj
     def domain_map_multi_aff(arg0):
@@ -16970,6 +22535,39 @@ class space(object):
         res = isl.isl_space_drop_all_params(isl.isl_space_copy(arg0.ptr))
         obj = space(ctx=ctx, ptr=res)
         return obj
+    def drop_dims(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_drop_dims(isl.isl_space_copy(arg0.ptr), arg1, arg2, arg3)
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def find_dim_by_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is id:
+                arg2 = id(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_find_dim_by_id(arg0.ptr, arg1, arg2.ptr)
+        return res
+    def find_dim_by_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_find_dim_by_name(arg0.ptr, arg1, arg2.encode('ascii'))
+        return res
     def flatten_domain(arg0):
         try:
             if not arg0.__class__ is space:
@@ -16990,6 +22588,48 @@ class space(object):
         res = isl.isl_space_flatten_range(isl.isl_space_copy(arg0.ptr))
         obj = space(ctx=ctx, ptr=res)
         return obj
+    def from_domain(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_from_domain(isl.isl_space_copy(arg0.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def from_range(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_from_range(isl.isl_space_copy(arg0.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def has_dim_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_has_dim_id(arg0.ptr, arg1, arg2)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def has_dim_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_has_dim_name(arg0.ptr, arg1, arg2)
+        if res < 0:
+            raise Error
+        return bool(res)
     def has_domain_tuple_id(arg0):
         try:
             if not arg0.__class__ is space:
@@ -17001,6 +22641,38 @@ class space(object):
         if res < 0:
             raise Error
         return bool(res)
+    def has_equal_params(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is space:
+                arg1 = space(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_has_equal_params(arg0.ptr, arg1.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def has_equal_tuples(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is space:
+                arg1 = space(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_has_equal_tuples(arg0.ptr, arg1.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
     def has_range_tuple_id(arg0):
         try:
             if not arg0.__class__ is space:
@@ -17009,6 +22681,17 @@ class space(object):
             raise
         ctx = arg0.ctx
         res = isl.isl_space_has_range_tuple_id(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def has_tuple_id(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_has_tuple_id(arg0.ptr, arg1)
         if res < 0:
             raise Error
         return bool(res)
@@ -17042,6 +22725,22 @@ class space(object):
         res = isl.isl_space_identity_pw_multi_aff_on_domain(isl.isl_space_copy(arg0.ptr))
         obj = pw_multi_aff(ctx=ctx, ptr=res)
         return obj
+    def is_domain(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is space:
+                arg1 = space(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_is_domain(arg0.ptr, arg1.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
     def is_equal(arg0, arg1):
         try:
             if not arg0.__class__ is space:
@@ -17058,6 +22757,66 @@ class space(object):
         if res < 0:
             raise Error
         return bool(res)
+    def is_map(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_is_map(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_params(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_is_params(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_product(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_is_product(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_range(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is space:
+                arg1 = space(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_is_range(arg0.ptr, arg1.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def is_set(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_is_set(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
     def is_wrapping(arg0):
         try:
             if not arg0.__class__ is space:
@@ -17069,6 +22828,21 @@ class space(object):
         if res < 0:
             raise Error
         return bool(res)
+    def map_from_domain_and_range(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg1.__class__ is space:
+                arg1 = space(arg1)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_map_from_domain_and_range(isl.isl_space_copy(arg0.ptr), isl.isl_space_copy(arg1.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
     def map_from_set(arg0):
         try:
             if not arg0.__class__ is space:
@@ -17220,6 +22994,37 @@ class space(object):
         res = isl.isl_space_range(isl.isl_space_copy(arg0.ptr))
         obj = space(ctx=ctx, ptr=res)
         return obj
+    def range_curry(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_range_curry(isl.isl_space_copy(arg0.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def range_is_wrapping(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_range_is_wrapping(arg0.ptr)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def range_map(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_range_map(isl.isl_space_copy(arg0.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
     def range_map_multi_aff(arg0):
         try:
             if not arg0.__class__ is space:
@@ -17262,6 +23067,26 @@ class space(object):
         return obj
     def get_range_tuple_id(arg0):
         return arg0.range_tuple_id()
+    def reset_tuple_id(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_reset_tuple_id(isl.isl_space_copy(arg0.ptr), arg1)
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def reset_user(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_reset_user(isl.isl_space_copy(arg0.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
     def reverse(arg0):
         try:
             if not arg0.__class__ is space:
@@ -17270,6 +23095,31 @@ class space(object):
             raise
         ctx = arg0.ctx
         res = isl.isl_space_reverse(isl.isl_space_copy(arg0.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def set_dim_id(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg3.__class__ is id:
+                arg3 = id(arg3)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_set_dim_id(isl.isl_space_copy(arg0.ptr), arg1, arg2, isl.isl_id_copy(arg3.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def set_dim_name(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_set_dim_name(isl.isl_space_copy(arg0.ptr), arg1, arg2, arg3.encode('ascii'))
         obj = space(ctx=ctx, ptr=res)
         return obj
     def set_domain_tuple(*args):
@@ -17290,6 +23140,16 @@ class space(object):
             obj = space(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def set_from_params(arg0):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_set_from_params(isl.isl_space_copy(arg0.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
     def set_range_tuple(*args):
         if len(args) == 2 and (args[1].__class__ is id or type(args[1]) == str):
             args = list(args)
@@ -17308,6 +23168,73 @@ class space(object):
             obj = space(ctx=ctx, ptr=res)
             return obj
         raise Error
+    def set_tuple_id(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is id:
+                arg2 = id(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_set_tuple_id(isl.isl_space_copy(arg0.ptr), arg1, isl.isl_id_copy(arg2.ptr))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def set_tuple_name(arg0, arg1, arg2):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_set_tuple_name(isl.isl_space_copy(arg0.ptr), arg1, arg2.encode('ascii'))
+        obj = space(ctx=ctx, ptr=res)
+        return obj
+    def tuple_id(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_get_tuple_id(arg0.ptr, arg1)
+        obj = id(ctx=ctx, ptr=res)
+        return obj
+    def get_tuple_id(arg0, arg1):
+        return arg0.tuple_id(arg1)
+    def tuple_is_equal(arg0, arg1, arg2, arg3):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        try:
+            if not arg2.__class__ is space:
+                arg2 = space(arg2)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_tuple_is_equal(arg0.ptr, arg1, arg2.ptr, arg3)
+        if res < 0:
+            raise Error
+        return bool(res)
+    def tuple_name(arg0, arg1):
+        try:
+            if not arg0.__class__ is space:
+                arg0 = space(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_space_get_tuple_name(arg0.ptr, arg1)
+        if res == 0:
+            raise Error
+        string = cast(res, c_char_p).value.decode('ascii')
+        return string
+    def get_tuple_name(arg0, arg1):
+        return arg0.tuple_name(arg1)
     def uncurry(arg0):
         try:
             if not arg0.__class__ is space:
@@ -17433,10 +23360,24 @@ isl.isl_space_add_param_id.restype = c_void_p
 isl.isl_space_add_param_id.argtypes = [c_void_p, c_void_p]
 isl.isl_space_add_unnamed_tuple_ui.restype = c_void_p
 isl.isl_space_add_unnamed_tuple_ui.argtypes = [c_void_p, c_int]
+isl.isl_space_align_params.restype = c_void_p
+isl.isl_space_align_params.argtypes = [c_void_p, c_void_p]
+isl.isl_space_can_curry.argtypes = [c_void_p]
+isl.isl_space_can_range_curry.argtypes = [c_void_p]
+isl.isl_space_can_uncurry.argtypes = [c_void_p]
+isl.isl_space_can_zip.argtypes = [c_void_p]
 isl.isl_space_curry.restype = c_void_p
 isl.isl_space_curry.argtypes = [c_void_p]
+isl.isl_space_dim.argtypes = [c_void_p, c_int]
+isl.isl_space_get_dim_id.restype = c_void_p
+isl.isl_space_get_dim_id.argtypes = [c_void_p, c_int, c_int]
+isl.isl_space_get_dim_name.restype = POINTER(c_char)
+isl.isl_space_get_dim_name.argtypes = [c_void_p, c_int, c_int]
 isl.isl_space_domain.restype = c_void_p
 isl.isl_space_domain.argtypes = [c_void_p]
+isl.isl_space_domain_is_wrapping.argtypes = [c_void_p]
+isl.isl_space_domain_map.restype = c_void_p
+isl.isl_space_domain_map.argtypes = [c_void_p]
 isl.isl_space_domain_map_multi_aff.restype = c_void_p
 isl.isl_space_domain_map_multi_aff.argtypes = [c_void_p]
 isl.isl_space_domain_map_pw_multi_aff.restype = c_void_p
@@ -17447,20 +23388,41 @@ isl.isl_space_get_domain_tuple_id.restype = c_void_p
 isl.isl_space_get_domain_tuple_id.argtypes = [c_void_p]
 isl.isl_space_drop_all_params.restype = c_void_p
 isl.isl_space_drop_all_params.argtypes = [c_void_p]
+isl.isl_space_drop_dims.restype = c_void_p
+isl.isl_space_drop_dims.argtypes = [c_void_p, c_int, c_int, c_int]
+isl.isl_space_find_dim_by_id.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_space_find_dim_by_name.argtypes = [c_void_p, c_int, c_char_p]
 isl.isl_space_flatten_domain.restype = c_void_p
 isl.isl_space_flatten_domain.argtypes = [c_void_p]
 isl.isl_space_flatten_range.restype = c_void_p
 isl.isl_space_flatten_range.argtypes = [c_void_p]
+isl.isl_space_from_domain.restype = c_void_p
+isl.isl_space_from_domain.argtypes = [c_void_p]
+isl.isl_space_from_range.restype = c_void_p
+isl.isl_space_from_range.argtypes = [c_void_p]
+isl.isl_space_has_dim_id.argtypes = [c_void_p, c_int, c_int]
+isl.isl_space_has_dim_name.argtypes = [c_void_p, c_int, c_int]
 isl.isl_space_has_domain_tuple_id.argtypes = [c_void_p]
+isl.isl_space_has_equal_params.argtypes = [c_void_p, c_void_p]
+isl.isl_space_has_equal_tuples.argtypes = [c_void_p, c_void_p]
 isl.isl_space_has_range_tuple_id.argtypes = [c_void_p]
+isl.isl_space_has_tuple_id.argtypes = [c_void_p, c_int]
 isl.isl_space_identity_multi_aff_on_domain.restype = c_void_p
 isl.isl_space_identity_multi_aff_on_domain.argtypes = [c_void_p]
 isl.isl_space_identity_multi_pw_aff_on_domain.restype = c_void_p
 isl.isl_space_identity_multi_pw_aff_on_domain.argtypes = [c_void_p]
 isl.isl_space_identity_pw_multi_aff_on_domain.restype = c_void_p
 isl.isl_space_identity_pw_multi_aff_on_domain.argtypes = [c_void_p]
+isl.isl_space_is_domain.argtypes = [c_void_p, c_void_p]
 isl.isl_space_is_equal.argtypes = [c_void_p, c_void_p]
+isl.isl_space_is_map.argtypes = [c_void_p]
+isl.isl_space_is_params.argtypes = [c_void_p]
+isl.isl_space_is_product.argtypes = [c_void_p]
+isl.isl_space_is_range.argtypes = [c_void_p, c_void_p]
+isl.isl_space_is_set.argtypes = [c_void_p]
 isl.isl_space_is_wrapping.argtypes = [c_void_p]
+isl.isl_space_map_from_domain_and_range.restype = c_void_p
+isl.isl_space_map_from_domain_and_range.argtypes = [c_void_p, c_void_p]
 isl.isl_space_map_from_set.restype = c_void_p
 isl.isl_space_map_from_set.argtypes = [c_void_p]
 isl.isl_space_multi_aff.restype = c_void_p
@@ -17483,6 +23445,11 @@ isl.isl_space_product.restype = c_void_p
 isl.isl_space_product.argtypes = [c_void_p, c_void_p]
 isl.isl_space_range.restype = c_void_p
 isl.isl_space_range.argtypes = [c_void_p]
+isl.isl_space_range_curry.restype = c_void_p
+isl.isl_space_range_curry.argtypes = [c_void_p]
+isl.isl_space_range_is_wrapping.argtypes = [c_void_p]
+isl.isl_space_range_map.restype = c_void_p
+isl.isl_space_range_map.argtypes = [c_void_p]
 isl.isl_space_range_map_multi_aff.restype = c_void_p
 isl.isl_space_range_map_multi_aff.argtypes = [c_void_p]
 isl.isl_space_range_map_pw_multi_aff.restype = c_void_p
@@ -17491,12 +23458,31 @@ isl.isl_space_range_reverse.restype = c_void_p
 isl.isl_space_range_reverse.argtypes = [c_void_p]
 isl.isl_space_get_range_tuple_id.restype = c_void_p
 isl.isl_space_get_range_tuple_id.argtypes = [c_void_p]
+isl.isl_space_reset_tuple_id.restype = c_void_p
+isl.isl_space_reset_tuple_id.argtypes = [c_void_p, c_int]
+isl.isl_space_reset_user.restype = c_void_p
+isl.isl_space_reset_user.argtypes = [c_void_p]
 isl.isl_space_reverse.restype = c_void_p
 isl.isl_space_reverse.argtypes = [c_void_p]
+isl.isl_space_set_dim_id.restype = c_void_p
+isl.isl_space_set_dim_id.argtypes = [c_void_p, c_int, c_int, c_void_p]
+isl.isl_space_set_dim_name.restype = c_void_p
+isl.isl_space_set_dim_name.argtypes = [c_void_p, c_int, c_int, c_char_p]
 isl.isl_space_set_domain_tuple_id.restype = c_void_p
 isl.isl_space_set_domain_tuple_id.argtypes = [c_void_p, c_void_p]
+isl.isl_space_set_from_params.restype = c_void_p
+isl.isl_space_set_from_params.argtypes = [c_void_p]
 isl.isl_space_set_range_tuple_id.restype = c_void_p
 isl.isl_space_set_range_tuple_id.argtypes = [c_void_p, c_void_p]
+isl.isl_space_set_tuple_id.restype = c_void_p
+isl.isl_space_set_tuple_id.argtypes = [c_void_p, c_int, c_void_p]
+isl.isl_space_set_tuple_name.restype = c_void_p
+isl.isl_space_set_tuple_name.argtypes = [c_void_p, c_int, c_char_p]
+isl.isl_space_get_tuple_id.restype = c_void_p
+isl.isl_space_get_tuple_id.argtypes = [c_void_p, c_int]
+isl.isl_space_tuple_is_equal.argtypes = [c_void_p, c_int, c_void_p, c_int]
+isl.isl_space_get_tuple_name.restype = POINTER(c_char)
+isl.isl_space_get_tuple_name.argtypes = [c_void_p, c_int]
 isl.isl_space_uncurry.restype = c_void_p
 isl.isl_space_uncurry.argtypes = [c_void_p]
 isl.isl_space_unit.restype = c_void_p
@@ -18348,6 +24334,18 @@ class val(object):
         return res
     def get_den_si(arg0):
         return arg0.den_si()
+    def den_val(arg0):
+        try:
+            if not arg0.__class__ is val:
+                arg0 = val(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_val_get_den_val(arg0.ptr)
+        obj = val(ctx=ctx, ptr=res)
+        return obj
+    def get_den_val(arg0):
+        return arg0.den_val()
     def div(arg0, arg1):
         try:
             if not arg0.__class__ is val:
@@ -18827,6 +24825,8 @@ isl.isl_val_ceil.restype = c_void_p
 isl.isl_val_ceil.argtypes = [c_void_p]
 isl.isl_val_cmp_si.argtypes = [c_void_p, c_long]
 isl.isl_val_get_den_si.argtypes = [c_void_p]
+isl.isl_val_get_den_val.restype = c_void_p
+isl.isl_val_get_den_val.argtypes = [c_void_p]
 isl.isl_val_div.restype = c_void_p
 isl.isl_val_div.argtypes = [c_void_p, c_void_p]
 isl.isl_val_eq.argtypes = [c_void_p, c_void_p]
@@ -19128,3 +25128,73 @@ isl.isl_val_list_free.restype = c_void_p
 isl.isl_val_list_free.argtypes = [c_void_p]
 isl.isl_val_list_to_str.restype = POINTER(c_char)
 isl.isl_val_list_to_str.argtypes = [c_void_p]
+
+class vertex(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_vertex_free(self.ptr)
+    def expr(arg0):
+        try:
+            if not arg0.__class__ is vertex:
+                arg0 = vertex(arg0)
+        except:
+            raise
+        ctx = arg0.ctx
+        res = isl.isl_vertex_get_expr(arg0.ptr)
+        obj = multi_aff(ctx=ctx, ptr=res)
+        return obj
+    def get_expr(arg0):
+        return arg0.expr()
+
+isl.isl_vertex_get_expr.restype = c_void_p
+isl.isl_vertex_get_expr.argtypes = [c_void_p]
+isl.isl_vertex_copy.restype = c_void_p
+isl.isl_vertex_copy.argtypes = [c_void_p]
+isl.isl_vertex_free.restype = c_void_p
+isl.isl_vertex_free.argtypes = [c_void_p]
+
+class vertices(object):
+    def __init__(self, *args, **keywords):
+        if "ptr" in keywords:
+            self.ctx = keywords["ctx"]
+            self.ptr = keywords["ptr"]
+            return
+        raise Error
+    def __del__(self):
+        if hasattr(self, 'ptr'):
+            isl.isl_vertices_free(self.ptr)
+    def foreach_vertex(arg0, arg1):
+        try:
+            if not arg0.__class__ is vertices:
+                arg0 = vertices(arg0)
+        except:
+            raise
+        exc_info = [None]
+        fn = CFUNCTYPE(c_int, c_void_p, c_void_p)
+        def cb_func(cb_arg0, cb_arg1):
+            cb_arg0 = vertex(ctx=arg0.ctx, ptr=(cb_arg0))
+            try:
+                arg1(cb_arg0)
+            except BaseException as e:
+                exc_info[0] = e
+                return -1
+            return 0
+        cb1 = fn(cb_func)
+        ctx = arg0.ctx
+        res = isl.isl_vertices_foreach_vertex(arg0.ptr, cb1, None)
+        if exc_info[0] is not None:
+            raise exc_info[0]
+        if res < 0:
+            raise Error
+
+isl.isl_vertices_foreach_vertex.argtypes = [c_void_p, c_void_p, c_void_p]
+isl.isl_vertices_copy.restype = c_void_p
+isl.isl_vertices_copy.argtypes = [c_void_p]
+isl.isl_vertices_free.restype = c_void_p
+isl.isl_vertices_free.argtypes = [c_void_p]
