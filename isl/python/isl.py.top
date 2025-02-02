@@ -4,7 +4,7 @@ from ctypes.util import find_library
 import platform
 from enum import IntEnum
 
-class ISL_FORMAT(IntEnum):
+class format(IntEnum):
   ISL = 0
   POLYLIB = 1
   POLYLIB_CONSTRAINTS = 2
@@ -13,11 +13,11 @@ class ISL_FORMAT(IntEnum):
   LATEX = 5
   EXT_POLYLIB = 6
 
-class ISL_YAML_STYLE(IntEnum):
+class yaml_style(IntEnum):
   BLOCK = 0
   FLOW = 1
 
-class ISL_DIM_TYPE(IntEnum):
+class dim_type(IntEnum):
 	CST = 0
 	PARAM = 1
 	IN = 2

@@ -238,7 +238,7 @@ __isl_give isl_printer *isl_printer_to_file(isl_ctx *ctx, FILE *file)
 	return p;
 }
 
-__isl_give isl_printer *isl_printer_from_file(isl_ctx *ctx, char *file_path)
+__isl_give isl_printer *isl_printer_to_file_path(isl_ctx *ctx, char *file_path)
 {
   FILE *file;
   file = fopen(file_path, "w");

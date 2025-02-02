@@ -2,7 +2,7 @@ from ctypes import *
 import platform
 from enum import IntEnum
 
-class ISL_FORMAT(IntEnum):
+class format(IntEnum):
   ISL = 0
   POLYLIB = 1
   POLYLIB_CONSTRAINTS = 2
@@ -11,11 +11,11 @@ class ISL_FORMAT(IntEnum):
   LATEX = 5
   EXT_POLYLIB = 6
 
-class ISL_YAML_STYLE(IntEnum):
+class yaml_style(IntEnum):
   BLOCK = 0
   FLOW = 1
 
-class ISL_DIM_TYPE(IntEnum):
+class dim_type(IntEnum):
 	CST = 0
 	PARAM = 1
 	IN = 2
@@ -19293,12 +19293,6 @@ class printer(object):
         res = isl.isl_printer_free(isl.isl_printer_copy(arg0.ptr))
         obj = printer(ctx=ctx, ptr=res)
         return obj
-    @staticmethod
-    def from_file(arg0):
-        ctx = Context.getDefaultInstance()
-        res = isl.isl_printer_from_file(ctx, arg0.encode('ascii'))
-        obj = printer(ctx=ctx, ptr=res)
-        return obj
     def print_ast_expr(arg0, arg1):
         try:
             if not arg0.__class__ is printer:
@@ -19419,6 +19413,12 @@ class printer(object):
         res = isl.isl_printer_start_line(isl.isl_printer_copy(arg0.ptr))
         obj = printer(ctx=ctx, ptr=res)
         return obj
+    @staticmethod
+    def to_file_path(arg0):
+        ctx = Context.getDefaultInstance()
+        res = isl.isl_printer_to_file_path(ctx, arg0.encode('ascii'))
+        obj = printer(ctx=ctx, ptr=res)
+        return obj
 
 isl.isl_printer_end_line.restype = c_void_p
 isl.isl_printer_end_line.argtypes = [c_void_p]
@@ -19426,8 +19426,6 @@ isl.isl_printer_flush.restype = c_void_p
 isl.isl_printer_flush.argtypes = [c_void_p]
 isl.isl_printer_free.restype = c_void_p
 isl.isl_printer_free.argtypes = [c_void_p]
-isl.isl_printer_from_file.restype = c_void_p
-isl.isl_printer_from_file.argtypes = [Context, c_char_p]
 isl.isl_printer_print_ast_expr.restype = c_void_p
 isl.isl_printer_print_ast_expr.argtypes = [c_void_p, c_void_p]
 isl.isl_printer_print_ast_node.restype = c_void_p
@@ -19448,6 +19446,8 @@ isl.isl_printer_set_yaml_style.restype = c_void_p
 isl.isl_printer_set_yaml_style.argtypes = [c_void_p, c_int]
 isl.isl_printer_start_line.restype = c_void_p
 isl.isl_printer_start_line.argtypes = [c_void_p]
+isl.isl_printer_to_file_path.restype = c_void_p
+isl.isl_printer_to_file_path.argtypes = [Context, c_char_p]
 isl.isl_printer_copy.restype = c_void_p
 isl.isl_printer_copy.argtypes = [c_void_p]
 isl.isl_printer_free.restype = c_void_p

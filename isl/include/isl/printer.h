@@ -11,7 +11,7 @@ extern "C" {
 #endif
 __isl_give isl_printer *isl_printer_to_file(isl_ctx *ctx, FILE *file);
 __isl_export
-__isl_give isl_printer *isl_printer_from_file(isl_ctx *ctx, char *file_path);
+__isl_give isl_printer *isl_printer_to_file_path(isl_ctx *ctx, char *file_path);
 __isl_give isl_printer *isl_printer_to_str(isl_ctx *ctx);
 __isl_give isl_printer *isl_printer_copy(__isl_keep isl_printer *printer);
 __isl_export
